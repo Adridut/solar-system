@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>My first three.js app for CG1 (Exercise 2)</title>
+        <style>
+            body { margin: 0; }
+            canvas { width: 100%; height: 100%; display: block; }
+        </style>
+    </head>
+    <body>
+        <script src="js/three.min.js"></script>
+        <!-- Einbinden der OrbitControls, um die Darstellung mit der Maus rotieren zu können. -->
+        <script src="js/OrbitControls.js"></script>
+        <script>
+            
+            var renderer = new THREE.WebGLRenderer();
+            renderer.setSize( window.innerWidth, window.innerHeight );
+            document.body.appendChild( renderer.domElement );
+
+            var scene = new THREE.Scene();
+            var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+            var controls = new THREE.OrbitControls( camera, renderer.domElement );
+
+            camera.position.set( 0, 0, 800 );
+            camera.lookAt( 0, 0, 0 );
+            controls.update();
+
+
+            var geometry = new THREE.SphereGeometry( 283.4, 32, 32 );
+            var material = new THREE.MeshBasicMaterial( {color: 0xffba08} );
+            var sun = new THREE.Mesh( geometry, material );
+            sun.position.set(0, 0, 0);
+            scene.add( sun );
+
+            geometry = new THREE.SphereGeometry( 1.0, 32, 32 );
+            material = new THREE.MeshBasicMaterial( {color: 0xeb7327} );
+            var mercury = new THREE.Mesh( geometry, material );
+            mercury.position.set(-288.4, 0, 0);
+            scene.add( mercury );
+
+            geometry = new THREE.SphereGeometry( 2.5, 32, 32 );
+            material = new THREE.MeshBasicMaterial( {color: 0xffae10} );
+            var venus = new THREE.Mesh( geometry, material );
+            venus.position.set(-295.3, 0, 0);
+            scene.add( venus );
+
+            geometry = new THREE.SphereGeometry( 2.6, 32, 32 );
+            material = new THREE.MeshBasicMaterial( {color: 0x208eed} );
+            var earth = new THREE.Mesh( geometry, material );
+            earth.position.set(-303.2, 0, 0);
+            scene.add( earth );
+
+            geometry = new THREE.SphereGeometry( 1.4, 32, 32 );
+            material = new THREE.MeshBasicMaterial( {color: 0xe6000d} );
+            var mars = new THREE.Mesh( geometry, material );
+            mars.position.set(-312.4, 0, 0);
+            scene.add( mars );
+
+            geometry = new THREE.SphereGeometry( 28.5, 32, 32 );
+            material = new THREE.MeshBasicMaterial( {color: 0x66cdaa} );
+            var jupiter = new THREE.Mesh( geometry, material );
+            jupiter.position.set(-379.1, 0, 0);
+            scene.add( jupiter );
+
+            geometry = new THREE.SphereGeometry( 23.4, 32, 32 );
+            material = new THREE.MeshBasicMaterial( {color: 0xfff2df} );
+            var saturn = new THREE.Mesh( geometry, material );
+            saturn.position.set(-474.2, 0, 0);
+            scene.add( saturn );
+
+            geometry = new THREE.SphereGeometry( 10, 32, 32 );
+            material = new THREE.MeshBasicMaterial( {color: 0x0af9f6} );
+            var uranus = new THREE.Mesh( geometry, material );
+            uranus.position.set(-604.6, 0, 0);
+            scene.add( uranus );
+
+            geometry = new THREE.SphereGeometry( 7.7, 32, 32 );
+            material = new THREE.MeshBasicMaterial( {color: 0x003177} );
+            var neptune = new THREE.Mesh( geometry, material );
+            neptune.position.set(-731.1, 0, 0);
+            scene.add( neptune );
+
+            var xDirection = 0;
+            var yDirection = 0;
+
+            function animate() {
+                requestAnimationFrame( animate );
+                mercury.position.y += -(mercury.position.x/87.97);
+                mercury.position.x += (mercury.position.y/87.97);
+                venus.position.y += -(venus.position.x/224.7);
+                venus.position.x += (venus.position.y/224.7);
+                earth.position.y += -(earth.position.x/365.26);
+                earth.position.x += (earth.position.y/365.26);
+                mars.position.y += -(mars.position.x/686.98);
+                mars.position.x += (mars.position.y/686.98);
+                jupiter.position.y += -(jupiter.position.x/4332.82);
+                jupiter.position.x += (jupiter.position.y/4332.82);
+                saturn.position.y += -(saturn.position.x/10755.70);
+                saturn.position.x += (saturn.position.y/10755.70);
+                uranus.position.y += -(uranus.position.x/30687.15);
+                uranus.position.x += (uranus.position.y/30687.15);
+                neptune.position.y += -(neptune.position.x/60190.03);
+                neptune.position.x += (neptune.position.y/60190.03);
+
+                controls.update();
+
+                renderer.render( scene, camera );
+            }
+            animate();
+        </script>
+    </body>
+</html>
