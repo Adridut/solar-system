@@ -13,7 +13,7 @@
         <!-- Einbinden der OrbitControls, um die Darstellung mit der Maus rotieren zu können. -->
         <script src="js/OrbitControls.js"></script>
         <script>
-            
+
             var renderer = new THREE.WebGLRenderer();
             renderer.setSize( window.innerWidth, window.innerHeight );
             document.body.appendChild( renderer.domElement );
@@ -26,28 +26,30 @@
             camera.lookAt( 0, 0, 0 );
             controls.update();
 
-
+            var sun_image = new THREE.TextureLoader().load('./textures/sunmap.jpg');
+            sun_texture = new THREE.MeshBasicMaterial({map: sun_image});
             var geometry = new THREE.SphereGeometry( 283.4, 32, 32 );
-            var material = new THREE.MeshBasicMaterial( {color: 0xffba08} );
-            var sun = new THREE.Mesh( geometry, material );
+            //var material = new THREE.MeshBasicMaterial( {color: 0xffba08} );
+            var sun = new THREE.Mesh( geometry, sun_texture );
             sun.position.set(0, 0, 0);
             scene.add( sun );
 
             geometry = new THREE.SphereGeometry( 1.0, 32, 32 );
-            material = new THREE.MeshBasicMaterial( {color: 0xeb7327} );
+            material = new THREE.MeshBasicMaterial( {color: 0x800080} );
             var mercury = new THREE.Mesh( geometry, material );
             mercury.position.set(-288.4, 0, 0);
             scene.add( mercury );
 
             geometry = new THREE.SphereGeometry( 2.5, 32, 32 );
-            material = new THREE.MeshBasicMaterial( {color: 0xffae10} );
+            material = new THREE.MeshBasicMaterial( {color: 0xf0f8ff} );
             var venus = new THREE.Mesh( geometry, material );
             venus.position.set(-295.3, 0, 0);
             scene.add( venus );
 
+            var earth_image = new THREE.TextureLoader().load('./textures/earthmap.jpg');
+            earth_texture = new THREE.MeshBasicMaterial({map: earth_image});
             geometry = new THREE.SphereGeometry( 2.6, 32, 32 );
-            material = new THREE.MeshBasicMaterial( {color: 0x208eed} );
-            var earth = new THREE.Mesh( geometry, material );
+            var earth = new THREE.Mesh( geometry, earth_texture );
             earth.position.set(-303.2, 0, 0);
             scene.add( earth );
 
