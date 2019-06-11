@@ -26,61 +26,66 @@
             camera.lookAt( 0, 0, 0 );
             controls.update();
 
+            var planetDistanceFromSun = 1.5;
+            var planetSize = 1.0;
+            var sunSize = 1;
+
             var sun_image = new THREE.TextureLoader().load('./textures/sunmap.jpg');
             sun_texture = new THREE.MeshBasicMaterial({map: sun_image});
-            var geometry = new THREE.SphereGeometry( 283.4, 32, 32 );
+            var geometry = new THREE.SphereGeometry( 283.4*sunSize, 32, 32 );
             //var material = new THREE.MeshBasicMaterial( {color: 0xffba08} );
             var sun = new THREE.Mesh( geometry, sun_texture );
             sun.position.set(0, 0, 0);
             scene.add( sun );
 
-            geometry = new THREE.SphereGeometry( 1.0, 32, 32 );
+            geometry = new THREE.SphereGeometry( 1.0*planetSize, 32, 32 );
             material = new THREE.MeshBasicMaterial( {color: 0x800080} );
             var mercury = new THREE.Mesh( geometry, material );
-            mercury.position.set(-288.4, 0, 0);
+            mercury.position.set(-288.4*planetDistanceFromSun, 0, 0);
             scene.add( mercury );
 
-            geometry = new THREE.SphereGeometry( 2.5, 32, 32 );
+            geometry = new THREE.SphereGeometry( 2.5*planetSize, 32, 32 );
             material = new THREE.MeshBasicMaterial( {color: 0xf0f8ff} );
             var venus = new THREE.Mesh( geometry, material );
-            venus.position.set(-295.3, 0, 0);
+            venus.position.set(-295.3*planetDistanceFromSun, 0, 0);
             scene.add( venus );
 
             var earth_image = new THREE.TextureLoader().load('./textures/earthmap.jpg');
             earth_texture = new THREE.MeshBasicMaterial({map: earth_image});
-            geometry = new THREE.SphereGeometry( 2.6, 32, 32 );
+            geometry = new THREE.SphereGeometry( 2.6*planetSize, 32, 32 );
             var earth = new THREE.Mesh( geometry, earth_texture );
-            earth.position.set(-303.2, 0, 0);
+            earth.position.set(-303.2*planetDistanceFromSun, 0, 0);
             scene.add( earth );
 
-            geometry = new THREE.SphereGeometry( 1.4, 32, 32 );
+
+            geometry = new THREE.SphereGeometry( 1.4*planetSize, 32, 32 );
             material = new THREE.MeshBasicMaterial( {color: 0xe6000d} );
             var mars = new THREE.Mesh( geometry, material );
-            mars.position.set(-312.4, 0, 0);
+            mars.position.set(-312.4*planetDistanceFromSun, 0, 0);
             scene.add( mars );
 
-            geometry = new THREE.SphereGeometry( 28.5, 32, 32 );
+            geometry = new THREE.SphereGeometry( 28.5*planetSize, 32, 32 );
             material = new THREE.MeshBasicMaterial( {color: 0x66cdaa} );
             var jupiter = new THREE.Mesh( geometry, material );
-            jupiter.position.set(-379.1, 0, 0);
+            jupiter.position.set(-379.1*planetDistanceFromSun, 0, 0);
             scene.add( jupiter );
 
-            geometry = new THREE.SphereGeometry( 23.4, 32, 32 );
+            geometry = new THREE.SphereGeometry( 23.4*planetSize, 32, 32 );
             material = new THREE.MeshBasicMaterial( {color: 0xfff2df} );
             var saturn = new THREE.Mesh( geometry, material );
-            saturn.position.set(-474.2, 0, 0);
+            saturn.position.set(-474.2*planetDistanceFromSun, 0, 0);
             scene.add( saturn );
 
-            geometry = new THREE.SphereGeometry( 10, 32, 32 );
+            geometry = new THREE.SphereGeometry( 10*planetSize, 32, 32 );
             material = new THREE.MeshBasicMaterial( {color: 0x0af9f6} );
             var uranus = new THREE.Mesh( geometry, material );
-            uranus.position.set(-604.6, 0, 0);
+            uranus.position.set(-604.6*planetDistanceFromSun, 0, 0);
             scene.add( uranus );
 
-            geometry = new THREE.SphereGeometry( 7.7, 32, 32 );
+            geometry = new THREE.SphereGeometry( 7.7*planetSize, 32, 32 );
             material = new THREE.MeshBasicMaterial( {color: 0x003177} );
             var neptune = new THREE.Mesh( geometry, material );
-            neptune.position.set(-731.1, 0, 0);
+            neptune.position.set(-731.1*planetDistanceFromSun, 0, 0);
             scene.add( neptune );
 
             var xDirection = 0;
