@@ -14,6 +14,9 @@
         <script src="js/OrbitControls.js"></script>
         <script>
 
+            //TODO Saturn and Uranus rings
+            //TODO Bumpmap and others maps...
+
             var renderer = new THREE.WebGLRenderer();
             renderer.setSize( window.innerWidth, window.innerHeight );
             document.body.appendChild( renderer.domElement );
@@ -38,52 +41,58 @@
             sun.position.set(0, 0, 0);
             scene.add( sun );
 
+            var mercury_image = new THREE.TextureLoader().load('./textures/mercurymap.jpg');
             geometry = new THREE.SphereGeometry( 1.0*planetSize, 32, 32 );
-            material = new THREE.MeshBasicMaterial( {color: 0x800080} );
+            material = new THREE.MeshBasicMaterial({map: mercury_image});
             var mercury = new THREE.Mesh( geometry, material );
             mercury.position.set(-288.4*planetDistanceFromSun, 0, 0);
             scene.add( mercury );
 
+            var venus_image = new THREE.TextureLoader().load('./textures/venusmap.jpg');
             geometry = new THREE.SphereGeometry( 2.5*planetSize, 32, 32 );
-            material = new THREE.MeshBasicMaterial( {color: 0xf0f8ff} );
+            material = new THREE.MeshBasicMaterial({map: venus_image});
             var venus = new THREE.Mesh( geometry, material );
             venus.position.set(-295.3*planetDistanceFromSun, 0, 0);
             scene.add( venus );
 
             var earth_image = new THREE.TextureLoader().load('./textures/earthmap.jpg');
-            earth_texture = new THREE.MeshBasicMaterial({map: earth_image});
             geometry = new THREE.SphereGeometry( 2.6*planetSize, 32, 32 );
-            var earth = new THREE.Mesh( geometry, earth_texture );
+            material = new THREE.MeshBasicMaterial({map: earth_image});
+            var earth = new THREE.Mesh( geometry, material );
             earth.position.set(-303.2*planetDistanceFromSun, 0, 0);
             scene.add( earth );
 
-
+            var mars_image = new THREE.TextureLoader().load('./textures/marsmap.jpg');
             geometry = new THREE.SphereGeometry( 1.4*planetSize, 32, 32 );
-            material = new THREE.MeshBasicMaterial( {color: 0xe6000d} );
+            material = new THREE.MeshBasicMaterial({map: mars_image});
             var mars = new THREE.Mesh( geometry, material );
             mars.position.set(-312.4*planetDistanceFromSun, 0, 0);
             scene.add( mars );
 
+            var jupiter_image = new THREE.TextureLoader().load('./textures/jupitermap.jpg');
             geometry = new THREE.SphereGeometry( 28.5*planetSize, 32, 32 );
-            material = new THREE.MeshBasicMaterial( {color: 0x66cdaa} );
+            material = new THREE.MeshBasicMaterial({map: jupiter_image});
             var jupiter = new THREE.Mesh( geometry, material );
             jupiter.position.set(-379.1*planetDistanceFromSun, 0, 0);
             scene.add( jupiter );
 
+            var saturn_image = new THREE.TextureLoader().load('./textures/saturnmap.jpg');
             geometry = new THREE.SphereGeometry( 23.4*planetSize, 32, 32 );
-            material = new THREE.MeshBasicMaterial( {color: 0xfff2df} );
+            material = new THREE.MeshBasicMaterial({map: saturn_image});
             var saturn = new THREE.Mesh( geometry, material );
             saturn.position.set(-474.2*planetDistanceFromSun, 0, 0);
             scene.add( saturn );
 
+            var uranus_image = new THREE.TextureLoader().load('./textures/uranusmap.jpg');
             geometry = new THREE.SphereGeometry( 10*planetSize, 32, 32 );
-            material = new THREE.MeshBasicMaterial( {color: 0x0af9f6} );
+            material = new THREE.MeshBasicMaterial({map: uranus_image});
             var uranus = new THREE.Mesh( geometry, material );
             uranus.position.set(-604.6*planetDistanceFromSun, 0, 0);
             scene.add( uranus );
 
+            var neptune_image = new THREE.TextureLoader().load('./textures/neptunemap.jpg');
             geometry = new THREE.SphereGeometry( 7.7*planetSize, 32, 32 );
-            material = new THREE.MeshBasicMaterial( {color: 0x003177} );
+            material = new THREE.MeshBasicMaterial({map: neptune_image});
             var neptune = new THREE.Mesh( geometry, material );
             neptune.position.set(-731.1*planetDistanceFromSun, 0, 0);
             scene.add( neptune );
