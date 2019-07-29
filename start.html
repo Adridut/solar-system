@@ -16,6 +16,7 @@
 
             //TODO Saturn and Uranus rings
             //TODO Bumpmap and others maps...
+            //TODO Rotation
 
             var renderer = new THREE.WebGLRenderer();
             renderer.setSize( window.innerWidth, window.innerHeight );
@@ -33,72 +34,84 @@
             var planetSize = 1.0;
             var sunSize = 1;
 
-            var sun_image = new THREE.TextureLoader().load('./textures/sunmap.jpg');
-            sun_texture = new THREE.MeshBasicMaterial({map: sun_image});
-            var geometry = new THREE.SphereGeometry( 283.4*sunSize, 32, 32 );
-            //var material = new THREE.MeshBasicMaterial( {color: 0xffba08} );
-            var sun = new THREE.Mesh( geometry, sun_texture );
-            sun.position.set(0, 0, 0);
-            scene.add( sun );
+            var neptuneData = {
+                name: "Neptune",
+                texture : './textures/neptunemap.jpg',
+                size: 7.7,
+                position: -731.1
+            };
+            var uranusData = {
+                name: "Uranus",
+                texture : './textures/uranusmap.jpg',
+                size: 10,
+                position: -604.6
+            };
+            var saturnData = {
+                name: "Saturn",
+                texture : './textures/saturnmap.jpg',
+                size: 23.4,
+                position: -474.2
+            };
+            var jupiterData = {
+                name: "Jupiter",
+                texture : './textures/jupitermap.jpg',
+                size: 28.5,
+                position: -379.1
+            };
+            var marsData = {
+                name: "Mars",
+                texture : './textures/marsmap.jpg',
+                size: 1.4,
+                position: -312.4
+            };
+            var earthData = {
+                name: "Earth",
+                texture : './textures/earthmap.jpg',
+                size: 2.6,
+                position: -303.2
+            };
+            var venusData = {
+                name: "Venus",
+                texture : './textures/venusmap.jpg',
+                size: 2.5,
+                position: -295.3
+            };
+            var mercuryData = {
+                name: "Mercury",
+                texture : './textures/mercurymap.jpg',
+                size: 1.0,
+                position: -288.41
+            };
+            var sunData = {
+                name: "Sun",
+                texture : './textures/sunmap.jpg',
+                size: 283.4*sunSize,
+                position: 0
+            };
 
-            var mercury_image = new THREE.TextureLoader().load('./textures/mercurymap.jpg');
-            geometry = new THREE.SphereGeometry( 1.0*planetSize, 32, 32 );
-            material = new THREE.MeshBasicMaterial({map: mercury_image});
-            var mercury = new THREE.Mesh( geometry, material );
-            mercury.position.set(-288.4*planetDistanceFromSun, 0, 0);
-            scene.add( mercury );
+            var neptune = createPLanet(neptuneData.texture, neptuneData.size, neptuneData.position);
+            var uranus = createPLanet(uranusData.texture, uranusData.size, uranusData.position);
+            var saturn = createPLanet(saturnData.texture, saturnData.size, saturnData.position);
+            var jupiter = createPLanet(jupiterData.texture, jupiterData.size, jupiterData.position);
+            var mars = createPLanet(marsData.texture, marsData.size, marsData.position);
+            var earth = createPLanet(earthData.texture, earthData.size, earthData.position);
+            var venus = createPLanet(venusData.texture, venusData.size, venusData.position);
+            var mercury = createPLanet(mercuryData.texture, mercuryData.size, mercuryData.position);
+            var sun = createPLanet(sunData.texture, sunData.size, sunData.position);
 
-            var venus_image = new THREE.TextureLoader().load('./textures/venusmap.jpg');
-            geometry = new THREE.SphereGeometry( 2.5*planetSize, 32, 32 );
-            material = new THREE.MeshBasicMaterial({map: venus_image});
-            var venus = new THREE.Mesh( geometry, material );
-            venus.position.set(-295.3*planetDistanceFromSun, 0, 0);
-            scene.add( venus );
 
-            var earth_image = new THREE.TextureLoader().load('./textures/earthmap.jpg');
-            geometry = new THREE.SphereGeometry( 2.6*planetSize, 32, 32 );
-            material = new THREE.MeshBasicMaterial({map: earth_image});
-            var earth = new THREE.Mesh( geometry, material );
-            earth.position.set(-303.2*planetDistanceFromSun, 0, 0);
-            scene.add( earth );
+            function createPLanet(texture, size, position) {
+                var img = new THREE.TextureLoader().load(texture);
+                geometry = new THREE.SphereGeometry( size*planetSize, 32, 32 );
+                material = new THREE.MeshBasicMaterial({map: img});
+                var planet = new THREE.Mesh( geometry, material );
+                planet.position.set(position*planetDistanceFromSun, 0, 0);
+                scene.add( planet );
+                return planet
+            }
 
-            var mars_image = new THREE.TextureLoader().load('./textures/marsmap.jpg');
-            geometry = new THREE.SphereGeometry( 1.4*planetSize, 32, 32 );
-            material = new THREE.MeshBasicMaterial({map: mars_image});
-            var mars = new THREE.Mesh( geometry, material );
-            mars.position.set(-312.4*planetDistanceFromSun, 0, 0);
-            scene.add( mars );
+            //camera.position.set( -379.1*planetDistanceFromSun, 0, 800 );
 
-            var jupiter_image = new THREE.TextureLoader().load('./textures/jupitermap.jpg');
-            geometry = new THREE.SphereGeometry( 28.5*planetSize, 32, 32 );
-            material = new THREE.MeshBasicMaterial({map: jupiter_image});
-            var jupiter = new THREE.Mesh( geometry, material );
-            jupiter.position.set(-379.1*planetDistanceFromSun, 0, 0);
-            scene.add( jupiter );
-
-            var saturn_image = new THREE.TextureLoader().load('./textures/saturnmap.jpg');
-            geometry = new THREE.SphereGeometry( 23.4*planetSize, 32, 32 );
-            material = new THREE.MeshBasicMaterial({map: saturn_image});
-            var saturn = new THREE.Mesh( geometry, material );
-            saturn.position.set(-474.2*planetDistanceFromSun, 0, 0);
-            scene.add( saturn );
-
-            var uranus_image = new THREE.TextureLoader().load('./textures/uranusmap.jpg');
-            geometry = new THREE.SphereGeometry( 10*planetSize, 32, 32 );
-            material = new THREE.MeshBasicMaterial({map: uranus_image});
-            var uranus = new THREE.Mesh( geometry, material );
-            uranus.position.set(-604.6*planetDistanceFromSun, 0, 0);
-            scene.add( uranus );
-
-            var neptune_image = new THREE.TextureLoader().load('./textures/neptunemap.jpg');
-            geometry = new THREE.SphereGeometry( 7.7*planetSize, 32, 32 );
-            material = new THREE.MeshBasicMaterial({map: neptune_image});
-            var neptune = new THREE.Mesh( geometry, material );
-            neptune.position.set(-731.1*planetDistanceFromSun, 0, 0);
-            scene.add( neptune );
-
-            var xDirection = 0;
-            var yDirection = 0;
 
             function animate() {
                 requestAnimationFrame( animate );
@@ -118,11 +131,12 @@
                 uranus.position.x += (uranus.position.y/30687.15);
                 neptune.position.y += -(neptune.position.x/60190.03);
                 neptune.position.x += (neptune.position.y/60190.03);
-
+                
                 controls.update();
 
                 renderer.render( scene, camera );
             }
+
             animate();
         </script>
     </body>
