@@ -1,143 +1,150 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>My first three.js app for CG1 (Exercise 2)</title>
-        <style>
-            body { margin: 0; }
-            canvas { width: 100%; height: 100%; display: block; }
-        </style>
-    </head>
-    <body>
-        <script src="js/three.min.js"></script>
-        <!-- Einbinden der OrbitControls, um die Darstellung mit der Maus rotieren zu können. -->
-        <script src="js/OrbitControls.js"></script>
-        <script>
+<head>
+    <meta charset="utf-8">
+    <title>My first three.js app for CG1 (Exercise 2)</title>
+    <style>
+        body {
+            margin: 0;
+        }
 
-            //TODO Saturn and Uranus rings
-            //TODO Bumpmap and others maps...
-            //TODO Rotation
+        canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<script src="js/three.min.js"></script>
+<!-- Einbinden der OrbitControls, um die Darstellung mit der Maus rotieren zu können. -->
+<script src="js/OrbitControls.js"></script>
+<script>
 
-            var renderer = new THREE.WebGLRenderer();
-            renderer.setSize( window.innerWidth, window.innerHeight );
-            document.body.appendChild( renderer.domElement );
+    //TODO Saturn and Uranus rings
+    //TODO Bumpmap and others maps...
+    //TODO Rotation
+    //TODO onClick
+    //TODO distances
+    //TODO add the Moon
 
-            var scene = new THREE.Scene();
-            var camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-            var controls = new THREE.OrbitControls( camera, renderer.domElement );
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
 
-            camera.position.set( 0, 0, 800 );
-            camera.lookAt( 0, 0, 0 );
-            controls.update();
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    var controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-            var planetDistanceFromSun = 1.5;
-            var planetSize = 1.0;
-            var sunSize = 1;
+    camera.position.set(0, 0, 800);
+    camera.lookAt(0, 0, 0);
+    controls.update();
 
-            var neptuneData = {
-                name: "Neptune",
-                texture : './textures/neptunemap.jpg',
-                size: 7.7,
-                position: -731.1
-            };
-            var uranusData = {
-                name: "Uranus",
-                texture : './textures/uranusmap.jpg',
-                size: 10,
-                position: -604.6
-            };
-            var saturnData = {
-                name: "Saturn",
-                texture : './textures/saturnmap.jpg',
-                size: 23.4,
-                position: -474.2
-            };
-            var jupiterData = {
-                name: "Jupiter",
-                texture : './textures/jupitermap.jpg',
-                size: 28.5,
-                position: -379.1
-            };
-            var marsData = {
-                name: "Mars",
-                texture : './textures/marsmap.jpg',
-                size: 1.4,
-                position: -312.4
-            };
-            var earthData = {
-                name: "Earth",
-                texture : './textures/earthmap.jpg',
-                size: 2.6,
-                position: -303.2
-            };
-            var venusData = {
-                name: "Venus",
-                texture : './textures/venusmap.jpg',
-                size: 2.5,
-                position: -295.3
-            };
-            var mercuryData = {
-                name: "Mercury",
-                texture : './textures/mercurymap.jpg',
-                size: 1.0,
-                position: -288.41
-            };
-            var sunData = {
-                name: "Sun",
-                texture : './textures/sunmap.jpg',
-                size: 283.4*sunSize,
-                position: 0
-            };
+    var planetDistanceFromSun = 1.5;
+    var planetSize = 1.0;
+    var sunSize = 1;
 
-            var neptune = createPLanet(neptuneData.texture, neptuneData.size, neptuneData.position);
-            var uranus = createPLanet(uranusData.texture, uranusData.size, uranusData.position);
-            var saturn = createPLanet(saturnData.texture, saturnData.size, saturnData.position);
-            var jupiter = createPLanet(jupiterData.texture, jupiterData.size, jupiterData.position);
-            var mars = createPLanet(marsData.texture, marsData.size, marsData.position);
-            var earth = createPLanet(earthData.texture, earthData.size, earthData.position);
-            var venus = createPLanet(venusData.texture, venusData.size, venusData.position);
-            var mercury = createPLanet(mercuryData.texture, mercuryData.size, mercuryData.position);
-            var sun = createPLanet(sunData.texture, sunData.size, sunData.position);
+    //Planets data
+    var solarSystemData = [
+        {
+            name: "Neptune",
+            texture: './textures/neptunemap.jpg',
+            size: 7.7,
+            position: -731.1,
+            speed: 60190.03
+        },
+        {
+            name: "Uranus",
+            texture: './textures/uranusmap.jpg',
+            size: 10,
+            position: -604.6,
+            speed: 30687.15
+        },
+        {
+            name: "Saturn",
+            texture: './textures/saturnmap.jpg',
+            size: 23.4,
+            position: -474.2,
+            speed: 10755.70
+        },
+        {
+            name: "Jupiter",
+            texture: './textures/jupitermap.jpg',
+            size: 28.5,
+            position: -379.1,
+            speed: 4332.82
+        },
+        {
+            name: "Mars",
+            texture: './textures/marsmap.jpg',
+            size: 1.4,
+            position: -312.4,
+            speed: 686.98
+        },
+        {
+            name: "Earth",
+            texture: './textures/earthmap.jpg',
+            size: 2.6,
+            position: -303.2,
+            speed: 365.26
+        },
+        {
+            name: "Venus",
+            texture: './textures/venusmap.jpg',
+            size: 2.5,
+            position: -295.3,
+            speed: 224.7
+        },
+        {
+            name: "Mercury",
+            texture: './textures/mercurymap.jpg',
+            size: 1.0,
+            position: -288.41,
+            speed: 87.97
+        },
+        {
+            name: "Sun",
+            texture: './textures/sunmap.jpg',
+            size: 283.4 * sunSize,
+            position: 0
+        }
+    ];
 
+    var solarSystem = new Array(9);
 
-            function createPLanet(texture, size, position) {
-                var img = new THREE.TextureLoader().load(texture);
-                geometry = new THREE.SphereGeometry( size*planetSize, 32, 32 );
-                material = new THREE.MeshBasicMaterial({map: img});
-                var planet = new THREE.Mesh( geometry, material );
-                planet.position.set(position*planetDistanceFromSun, 0, 0);
-                scene.add( planet );
-                return planet
-            }
+    //Creating planets
+    for (i = 0; i < solarSystemData.length; i++){
+        var s = solarSystemData[i];
+        solarSystem[i] = createPlanet(s.texture, s.size, s.position, s.speed);
+        scene.add(solarSystem[i]);
+    }
+    
+    function createPlanet(texture, size, position, speed) {
+        var img = new THREE.TextureLoader().load(texture);
+        geometry = new THREE.SphereGeometry(size * planetSize, 32, 32);
+        material = new THREE.MeshBasicMaterial({map: img});
+        var planet = new THREE.Mesh(geometry, material);
+        planet.position.set(position * planetDistanceFromSun, 0, 0);
+        return planet
+    }
 
-            //camera.position.set( -379.1*planetDistanceFromSun, 0, 800 );
+    function rotation() {
+        for (i = 0; i < solarSystem.length -1; i++){
+            solarSystem[i].position.x += (solarSystem[i].position.y / solarSystemData[i].speed);
+            solarSystem[i].position.y += -(solarSystem[i].position.x / solarSystemData[i].speed);
+        }
+    }
 
+    function animate() {
+        requestAnimationFrame(animate);
+        rotation();
 
-            function animate() {
-                requestAnimationFrame( animate );
-                mercury.position.y += -(mercury.position.x/87.97);
-                mercury.position.x += (mercury.position.y/87.97);
-                venus.position.y += -(venus.position.x/224.7);
-                venus.position.x += (venus.position.y/224.7);
-                earth.position.y += -(earth.position.x/365.26);
-                earth.position.x += (earth.position.y/365.26);
-                mars.position.y += -(mars.position.x/686.98);
-                mars.position.x += (mars.position.y/686.98);
-                jupiter.position.y += -(jupiter.position.x/4332.82);
-                jupiter.position.x += (jupiter.position.y/4332.82);
-                saturn.position.y += -(saturn.position.x/10755.70);
-                saturn.position.x += (saturn.position.y/10755.70);
-                uranus.position.y += -(uranus.position.x/30687.15);
-                uranus.position.x += (uranus.position.y/30687.15);
-                neptune.position.y += -(neptune.position.x/60190.03);
-                neptune.position.x += (neptune.position.y/60190.03);
-                
-                controls.update();
+        controls.update();
 
-                renderer.render( scene, camera );
-            }
+        renderer.render(scene, camera);
+    }
 
-            animate();
-        </script>
-    </body>
+    animate();
+</script>
+</body>
 </html>
