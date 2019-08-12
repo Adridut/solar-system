@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>My first three.js app for CG1 (Exercise 2)</title>
+    <title>Solar System</title>
     <style>
         body {
             margin: 0;
@@ -16,17 +16,22 @@
     </style>
 </head>
 <body>
+<button onclick="displayOrbits()">Add/Remove Orbits</button>
+
 <script src="js/three.min.js"></script>
 <!-- Einbinden der OrbitControls, um die Darstellung mit der Maus rotieren zu können. -->
 <script src="js/OrbitControls.js"></script>
 <script>
 
-    //TODO Saturn and Uranus rings
+    //TODO Saturn and Uranus rings (ring or torus geo)
     //TODO Bumpmap and others maps...
     //TODO Rotation
     //TODO onClick
     //TODO distances
     //TODO add the Moon
+    //TODO dwarf planets
+    //TODO asteroide belt
+    //TODO Matching color orbits
 
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -40,9 +45,13 @@
     camera.lookAt(0, 0, 0);
     controls.update();
 
-    var planetDistanceFromSun = 1.5;
-    var planetSize = 1.0;
-    var sunSize = 1;
+    var planetDistanceFromSun = 1;
+    var planetSize = 1;
+    var sunSize = 0.5;
+
+    var areOrbitsDisplay = 0;
+    var orbits = new Array(8);
+
 
     //Planets data
     var solarSystemData = [
@@ -115,29 +124,59 @@
     //Creating planets
     for (i = 0; i < solarSystemData.length; i++){
         var s = solarSystemData[i];
-        solarSystem[i] = createPlanet(s.texture, s.size, s.position, s.speed);
+        solarSystem[i] = createPlanet(s.texture, s.size, s.position);
         scene.add(solarSystem[i]);
     }
-    
-    function createPlanet(texture, size, position, speed) {
+
+    function createPlanet(texture, size, position) {
         var img = new THREE.TextureLoader().load(texture);
-        geometry = new THREE.SphereGeometry(size * planetSize, 32, 32);
+        geometry = new THREE.SphereBufferGeometry(size * planetSize, 32, 32);
         material = new THREE.MeshBasicMaterial({map: img});
         var planet = new THREE.Mesh(geometry, material);
         planet.position.set(position * planetDistanceFromSun, 0, 0);
+
         return planet
     }
 
-    function rotation() {
+    function displayOrbits(){
+        if (areOrbitsDisplay === 0) {
+            areOrbitsDisplay = 1;
+
+            for (i = 0; i < solarSystem.length - 1; i++) {
+                var s = solarSystemData[i];
+                var geometry = new THREE.TorusBufferGeometry(-(s.position) * planetDistanceFromSun, (s.size * planetSize / 10), 16, 100);
+                var material = new THREE.MeshBasicMaterial({color: 0x6897bb});
+                orbits[i] = new THREE.Mesh(geometry, material);
+                scene.add(orbits[i]);
+            }
+
+        } else {
+            areOrbitsDisplay = 0;
+
+            for (i = 0; i < solarSystem.length - 1; i++) {
+                scene.remove(orbits[i]);
+            }
+        }
+    }
+
+    function rotationAroundSun() {
         for (i = 0; i < solarSystem.length -1; i++){
             solarSystem[i].position.x += (solarSystem[i].position.y / solarSystemData[i].speed);
             solarSystem[i].position.y += -(solarSystem[i].position.x / solarSystemData[i].speed);
         }
     }
 
+    function selfRotation() {
+        for (i = 0; i < solarSystem.length; i++){
+            solarSystem[i].rotation.y += 0.01;
+        }
+    }
+
     function animate() {
         requestAnimationFrame(animate);
-        rotation();
+
+        rotationAroundSun();
+        selfRotation();
 
         controls.update();
 
