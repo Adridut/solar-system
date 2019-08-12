@@ -17,8 +17,11 @@
 </head>
 <body>
 
-<button onclick="displayOrbits()">Add/Remove Orbits</button>
-<div id='seconds-counter'> </div>
+<button onclick="displayOrbits()">Orbits</button>
+<button onclick="displayAxis()">Axis</button>
+<button onclick="speedDown()">- Speed</button>
+<button onclick="speedUp()">+ Speed</button>
+<div id='seconds-counter'></div>
 
 <script src="js/three.min.js"></script>
 <!-- Einbinden der OrbitControls, um die Darstellung mit der Maus rotieren zu können. -->
@@ -27,15 +30,13 @@
 
     //TODO Saturn and Uranus rings (ring or torus geo)
     //TODO Bumpmap and others maps...
-    //TODO Rotation
     //TODO onClick
     //TODO distances
     //TODO add the Moon
     //TODO dwarf planets
     //TODO asteroide belt
     //TODO Matching color orbits
-    //TODO Time representation
-    //TODO axis helper button
+    //TODO Improve time representation
 
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -52,12 +53,19 @@
     var planetDistanceFromSun = 1;
     var planetSize = 1;
     var sunSize = 0.5;
+    var time = 1;
 
     var areOrbitsDisplay = 0;
     var orbits = new Array(8);
 
+    var areAxisDisplay = 0;
+    var axisHelper = new THREE.AxesHelper(750);
+
+
     // 1 second = 1 day
     var speedAdjustment = 0.095;
+    var rotationAjustment = 0.11;
+
 
     //O.541 * days = rotation speed
 
@@ -133,21 +141,18 @@
             texture: './textures/sunmap.jpg',
             size: 283.4 * sunSize,
             position: 0,
-            rotation: 1
+            rotation: 26
         }
     ];
 
     var solarSystem = new Array(9);
 
     //Creating planets
-    for (i = 0; i < solarSystemData.length; i++){
+    for (i = 0; i < solarSystemData.length; i++) {
         var s = solarSystemData[i];
         solarSystem[i] = createPlanet(s.texture, s.size, s.position);
         scene.add(solarSystem[i]);
     }
-
-    var axesHelper = new THREE.AxesHelper( 750 );
-    scene.add( axesHelper );
 
     function createPlanet(texture, size, position) {
         var img = new THREE.TextureLoader().load(texture);
@@ -159,7 +164,7 @@
         return planet
     }
 
-    function displayOrbits(){
+    function displayOrbits() {
         if (areOrbitsDisplay === 0) {
             areOrbitsDisplay = 1;
 
@@ -180,30 +185,54 @@
         }
     }
 
+    function displayAxis() {
+        if (areAxisDisplay === 0) {
+            areAxisDisplay = 1;
+            scene.add(axisHelper);
+        } else {
+            areAxisDisplay = 0;
+            scene.remove(axisHelper);
+        }
+    }
+
     function rotationAroundSun() {
-        for (i = 0; i < solarSystem.length -1; i++){
-            solarSystem[i].position.x += (solarSystem[i].position.y / solarSystemData[i].speed*speedAdjustment);
-            solarSystem[i].position.y += -(solarSystem[i].position.x / solarSystemData[i].speed*speedAdjustment);
+        for (i = 0; i < solarSystem.length - 1; i++) {
+            solarSystem[i].position.x += ((solarSystem[i].position.y / solarSystemData[i].speed * speedAdjustment) * time);
+            solarSystem[i].position.y += -((solarSystem[i].position.x / solarSystemData[i].speed * speedAdjustment) * time);
         }
     }
 
     function selfRotation() {
-        for (i = 0; i < solarSystem.length; i++){
-            solarSystem[i].rotation.y += (0.13/solarSystemData[i].rotation);
+        for (i = 0; i < solarSystem.length; i++) {
+            solarSystem[i].rotation.y += ((rotationAjustment / solarSystemData[i].rotation) * time);
         }
     }
 
     var seconds = 0;
+    var modelTime = 0;
     var el = document.getElementById('seconds-counter');
 
     //Timer
     function incrementSeconds() {
         seconds += 1;
-        el.innerText = "You have been here for " + seconds + " seconds.";
+        modelTime += 1*time;
+        el.innerText = "You have been here for " + seconds + " seconds, "
+            + modelTime + " days according to this model. \n 1 real second = " + time + " model days";
     }
+
     var cancel = setInterval(incrementSeconds, 1000);
 
+    function speedUp() {
+        time += 0.5;
+        el.innerText = "You have been here for " + seconds + " seconds, "
+            + modelTime + " days according to this model. \n 1 real second = " + time + " model second";
+    }
 
+    function speedDown() {
+        time -= 0.5;
+        el.innerText = "You have been here for " + seconds + " seconds, "
+            + modelTime + " days according to this model. \n 1 real second = " + time + " model second";
+    }
 
     function animate() {
         requestAnimationFrame(animate);
