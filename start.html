@@ -16,7 +16,9 @@
     </style>
 </head>
 <body>
+
 <button onclick="displayOrbits()">Add/Remove Orbits</button>
+<div id='seconds-counter'> </div>
 
 <script src="js/three.min.js"></script>
 <!-- Einbinden der OrbitControls, um die Darstellung mit der Maus rotieren zu können. -->
@@ -32,6 +34,8 @@
     //TODO dwarf planets
     //TODO asteroide belt
     //TODO Matching color orbits
+    //TODO Time representation
+    //TODO axis helper button
 
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -52,6 +56,11 @@
     var areOrbitsDisplay = 0;
     var orbits = new Array(8);
 
+    // 1 second = 1 day
+    var speedAdjustment = 0.095;
+
+    //O.541 * days = rotation speed
+
 
     //Planets data
     var solarSystemData = [
@@ -60,62 +69,71 @@
             texture: './textures/neptunemap.jpg',
             size: 7.7,
             position: -731.1,
-            speed: 60190.03
+            speed: 60190.03,
+            rotation: 0.671
         },
         {
             name: "Uranus",
             texture: './textures/uranusmap.jpg',
             size: 10,
             position: -604.6,
-            speed: 30687.15
+            speed: 30687.15,
+            rotation: -0.718
         },
         {
             name: "Saturn",
             texture: './textures/saturnmap.jpg',
             size: 23.4,
             position: -474.2,
-            speed: 10755.70
+            speed: 10755.70,
+            rotation: 0.437
         },
         {
             name: "Jupiter",
             texture: './textures/jupitermap.jpg',
             size: 28.5,
             position: -379.1,
-            speed: 4332.82
+            speed: 4332.82,
+            rotation: 0.423
         },
         {
             name: "Mars",
             texture: './textures/marsmap.jpg',
             size: 1.4,
             position: -312.4,
-            speed: 686.98
+            speed: 686.98,
+            rotation: 1.02
         },
         {
             name: "Earth",
             texture: './textures/earthmap.jpg',
             size: 2.6,
             position: -303.2,
-            speed: 365.26
+            speed: 365.26,
+            rotation: 1
         },
         {
             name: "Venus",
             texture: './textures/venusmap.jpg',
             size: 2.5,
             position: -295.3,
-            speed: 224.7
+            speed: 224.7,
+            rotation: -243.02
         },
         {
             name: "Mercury",
             texture: './textures/mercurymap.jpg',
             size: 1.0,
             position: -288.41,
-            speed: 87.97
+            speed: 87.97,
+            rotation: 58.55
         },
         {
             name: "Sun",
             texture: './textures/sunmap.jpg',
             size: 283.4 * sunSize,
-            position: 0
+            position: 0,
+            rotation: 1
         }
     ];
 
@@ -127,6 +145,9 @@
         solarSystem[i] = createPlanet(s.texture, s.size, s.position);
         scene.add(solarSystem[i]);
     }
+
+    var axesHelper = new THREE.AxesHelper( 750 );
+    scene.add( axesHelper );
 
     function createPlanet(texture, size, position) {
         var img = new THREE.TextureLoader().load(texture);
@@ -161,16 +182,28 @@
 
     function rotationAroundSun() {
         for (i = 0; i < solarSystem.length -1; i++){
-            solarSystem[i].position.x += (solarSystem[i].position.y / solarSystemData[i].speed);
-            solarSystem[i].position.y += -(solarSystem[i].position.x / solarSystemData[i].speed);
+            solarSystem[i].position.x += (solarSystem[i].position.y / solarSystemData[i].speed*speedAdjustment);
+            solarSystem[i].position.y += -(solarSystem[i].position.x / solarSystemData[i].speed*speedAdjustment);
         }
     }
 
     function selfRotation() {
         for (i = 0; i < solarSystem.length; i++){
-            solarSystem[i].rotation.y += 0.01;
+            solarSystem[i].rotation.y += (0.13/solarSystemData[i].rotation);
         }
     }
+
+    var seconds = 0;
+    var el = document.getElementById('seconds-counter');
+
+    //Timer
+    function incrementSeconds() {
+        seconds += 1;
+        el.innerText = "You have been here for " + seconds + " seconds.";
+    }
+    var cancel = setInterval(incrementSeconds, 1000);
+
+
 
     function animate() {
         requestAnimationFrame(animate);
