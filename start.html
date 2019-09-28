@@ -19,6 +19,7 @@
 
 <button onclick="displayOrbits()">Orbits</button>
 <button onclick="displayAxis()">Axis</button>
+<button onclick="setLight()">Lights</button>
 <button onclick="speedDown()">- Speed</button>
 <button onclick="speedUp()">+ Speed</button>
 <div id='seconds-counter'></div>
@@ -32,7 +33,7 @@
     //TODO Saturn and Uranus rings (ring or torus geo)
     //TODO Bumpmap and others maps...
     //TODO onClick
-    //TODO Improve time representation
+    //TODO Improve time representation/modification
     //TODO Buttons to change planets sizes and distances
     //TODO distances
 
@@ -66,6 +67,8 @@
 
     var areAxisDisplay = 0;
     var axisHelper = new THREE.AxesHelper(750);
+
+    var displaySunlight = 0;
 
 
     // 1 second = 1 day
@@ -156,14 +159,35 @@
     //Creating planets
     for (i = 0; i < solarSystemData.length; i++) {
         var s = solarSystemData[i];
-        solarSystem[i] = createPlanet(s.texture, s.size, s.position);
+        solarSystem[i] = createPlanet(s.texture, s.size, s.position, s.name);
         scene.add(solarSystem[i]);
     }
 
-    function createPlanet(texture, size, position) {
+    //Lights
+    var sunlight = new THREE.PointLight( 0xffffff, 1, 10000 );
+    sunlight.position.set( 0, 0, 0 );
+    var light = new THREE.AmbientLight( 0xffffff, 1 );
+    scene.add(light);
+
+
+    //Saturn ring
+    // var ringText = new THREE.TextureLoader().load('./textures/saturnringcolorthumb.jpg');
+    // var ringTransText = new THREE.TextureLoader().load('./textures/saturnringpatternthumb.jpg');
+    // var geometry = new THREE.RingBufferGeometry( solarSystemData[2].size + 8, solarSystemData[2].size + 2, 64 );
+    // var material = new THREE.MeshBasicMaterial( { map: ringText, side: THREE.DoubleSide} );
+    // var saturnRing = new THREE.Mesh( geometry, material );
+    // saturnRing.lookAt(new THREE.Vector3(0.5,-100,0));
+    // saturnRing.position.set(solarSystemData[2].position, 0, 0);
+    // scene.add( saturnRing );
+
+    function createPlanet(texture, size, position, name) {
         var img = new THREE.TextureLoader().load(texture);
         geometry = new THREE.SphereBufferGeometry(size * planetSize, 32, 32);
-        material = new THREE.MeshBasicMaterial({map: img});
+        if (name === "Sun"){
+            material = new THREE.MeshBasicMaterial({map: img});
+        } else {
+            material = new THREE.MeshPhongMaterial({map: img});
+        }
         var planet = new THREE.Mesh(geometry, material);
         planet.position.set(position * planetDistanceFromSun, 0, 0);
 
@@ -201,11 +225,27 @@
         }
     }
 
+    function setLight() {
+
+        if (displaySunlight === 0){
+            scene.remove(light);
+            scene.add( sunlight );
+            displaySunlight = 1;
+        } else {
+            //Ambientlight
+            scene.remove(sunlight);
+            scene.add( light );
+            displaySunlight = 0;
+        }
+    }
+
     function rotationAroundSun() {
         for (i = 0; i < solarSystem.length - 1; i++) {
             solarSystem[i].position.x += ((solarSystem[i].position.y / solarSystemData[i].speed * speedAdjustment) * time);
             solarSystem[i].position.y += -((solarSystem[i].position.x / solarSystemData[i].speed * speedAdjustment) * time);
         }
+        // saturnRing.position.x += ((saturnRing.position.y / solarSystemData[2].speed * speedAdjustment) * time);
+        // saturnRing.position.y += -((saturnRing.position.x / solarSystemData[2].speed * speedAdjustment) * time);
     }
 
     function selfRotation() {
@@ -221,23 +261,23 @@
     //Timer
     function incrementSeconds() {
         seconds += 1;
-        modelTime += 1*time;
+        modelTime += time;
         el.innerText = "You have been here for " + seconds + " seconds, "
-            + modelTime + " days according to this model. \n 1 real second = " + time + " model days";
+            + modelTime + " days according to this model. \n 1 real second = " + time + " model day(s)";
     }
 
     var cancel = setInterval(incrementSeconds, 1000);
 
     function speedUp() {
-        time += 0.5;
+        time *= 2;
         el.innerText = "You have been here for " + seconds + " seconds, "
-            + modelTime + " days according to this model. \n 1 real second = " + time + " model second";
+            + modelTime + " days according to this model. \n 1 real second = " + time + " model day(s)";
     }
 
     function speedDown() {
-        time -= 0.5;
+        time /= 2;
         el.innerText = "You have been here for " + seconds + " seconds, "
-            + modelTime + " days according to this model. \n 1 real second = " + time + " model second";
+            + modelTime + " days according to this model. \n 1 real second = " + time + " model day(s)";
     }
 
     function animate() {
