@@ -31,11 +31,14 @@
 
     //1st
     //TODO Saturn and Uranus rings (ring or torus geo)
-    //TODO Bumpmap and others maps...
+    //TODO Earth maps
     //TODO onClick
     //TODO Improve time representation/modification
     //TODO Buttons to change planets sizes and distances
-    //TODO distances
+    //TODO distances/sizes
+    //TODO Far side of planets not completly dark
+    //TODO Stars background
+    //TODO Buttons inside the image
 
     //2nd
     //TODO Matching color orbits
@@ -60,6 +63,7 @@
     var planetDistanceFromSun = 1;
     var planetSize = 1;
     var sunSize = 0.5;
+    var earthSize = 1;
     var time = 1;
 
     var areOrbitsDisplay = 0;
@@ -68,7 +72,7 @@
     var areAxisDisplay = 0;
     var axisHelper = new THREE.AxesHelper(750);
 
-    var displaySunlight = 0;
+    var displaySunlight = 1;
 
 
     // 1 second = 1 day
@@ -87,7 +91,8 @@
             size: 7.7,
             position: -731.1,
             speed: 60190.03,
-            rotation: 0.671
+            rotation: 0.671,
+            id: 8
         },
         {
             name: "Uranus",
@@ -95,7 +100,8 @@
             size: 10,
             position: -604.6,
             speed: 30687.15,
-            rotation: -0.718
+            rotation: -0.718,
+            id: 7
         },
         {
             name: "Saturn",
@@ -103,7 +109,8 @@
             size: 23.4,
             position: -474.2,
             speed: 10755.70,
-            rotation: 0.437
+            rotation: 0.437,
+            id: 6
         },
         {
             name: "Jupiter",
@@ -111,46 +118,56 @@
             size: 28.5,
             position: -379.1,
             speed: 4332.82,
-            rotation: 0.423
+            rotation: 0.423,
+            id: 5
         },
         {
             name: "Mars",
             texture: './textures/marsmap.jpg',
+            bump: './textures/marsbump.jpg',
             size: 1.4,
             position: -312.4,
             speed: 686.98,
-            rotation: 1.02
+            rotation: 1.02,
+            id: 4
         },
         {
             name: "Earth",
             texture: './textures/earthmap.jpg',
-            size: 2.6,
+            bump: './textures/earthbump.jpg',
+            size: 2.6*earthSize,
             position: -303.2,
             speed: 365.26,
-            rotation: 1
+            rotation: 1,
+            id: 3
         },
         {
             name: "Venus",
             texture: './textures/venusmap.jpg',
+            bump: './textures/venusbump.jpg',
             size: 2.5,
             position: -295.3,
             speed: 224.7,
-            rotation: -243.02
+            rotation: -243.02,
+            id: 2
         },
         {
             name: "Mercury",
             texture: './textures/mercurymap.jpg',
+            bump: './textures/mercurybump.jpg',
             size: 1.0,
             position: -288.41,
             speed: 87.97,
-            rotation: 58.55
+            rotation: 58.55,
+            id: 1
         },
         {
             name: "Sun",
             texture: './textures/sunmap.jpg',
             size: 283.4 * sunSize,
             position: 0,
-            rotation: 26
+            rotation: 26,
+            id: 0
         }
     ];
 
@@ -158,8 +175,8 @@
 
     //Creating planets
     for (i = 0; i < solarSystemData.length; i++) {
-        var s = solarSystemData[i];
-        solarSystem[i] = createPlanet(s.texture, s.size, s.position, s.name);
+        var planet = solarSystemData[i];
+        solarSystem[i] = createPlanet(planet);
         scene.add(solarSystem[i]);
     }
 
@@ -167,7 +184,7 @@
     var sunlight = new THREE.PointLight( 0xffffff, 1, 10000 );
     sunlight.position.set( 0, 0, 0 );
     var light = new THREE.AmbientLight( 0xffffff, 1 );
-    scene.add(light);
+    scene.add(sunlight);
 
 
     //Saturn ring
@@ -180,16 +197,23 @@
     // saturnRing.position.set(solarSystemData[2].position, 0, 0);
     // scene.add( saturnRing );
 
-    function createPlanet(texture, size, position, name) {
-        var img = new THREE.TextureLoader().load(texture);
-        geometry = new THREE.SphereBufferGeometry(size * planetSize, 32, 32);
-        if (name === "Sun"){
+    function createPlanet(p) {
+        var img = new THREE.TextureLoader().load(p.texture);
+        geometry = new THREE.SphereBufferGeometry(p.size * planetSize, 32, 32);
+        if (p.name === "Sun"){
             material = new THREE.MeshBasicMaterial({map: img});
         } else {
             material = new THREE.MeshPhongMaterial({map: img});
         }
+
+        //Bump
+        if (p.id <= 4 && p.id > 0){
+            material.bumpMap = THREE.ImageUtils.loadTexture(p.bump);
+            material.bumpScale = 4
+        }
+
         var planet = new THREE.Mesh(geometry, material);
-        planet.position.set(position * planetDistanceFromSun, 0, 0);
+        planet.position.set(p.position * planetDistanceFromSun, 0, 0);
 
         return planet
     }
