@@ -15,18 +15,24 @@
         }
     </style>
 </head>
-<body>
 
-<button onclick="displayOrbits()">Orbits</button>
-<button onclick="displayAxis()">Axis</button>
-<button onclick="setLight()">Lights</button>
-<button onclick="speedDown()">- Speed</button>
-<button onclick="speedUp()">+ Speed</button>
-<div id='seconds-counter'></div>
+<body>
 
 <script src="js/three.min.js"></script>
 <!-- Einbinden der OrbitControls, um die Darstellung mit der Maus rotieren zu können. -->
+
 <script src="js/OrbitControls.js"></script>
+
+<!-- Buttons. with 'position: absolute', the buttons stays in the image  -->
+<div style="position: absolute">
+    <button onclick="displayOrbits()">Orbits</button>
+    <button onclick="displayAxis()">Axis</button>
+    <button onclick="setLight()">Lights</button>
+    <button onclick="speedDown()">- Speed</button>
+    <button onclick="speedUp()">+ Speed</button>
+    <div style="color: aqua" id='seconds-counter'></div>
+</div>
+
 <script>
 
     //1st
@@ -135,7 +141,7 @@
             name: "Earth",
             texture: './textures/earthmap.jpg',
             bump: './textures/earthbump.jpg',
-            size: 2.6*earthSize,
+            size: 2.6 * earthSize,
             position: -303.2,
             speed: 365.26,
             rotation: 1,
@@ -181,9 +187,9 @@
     }
 
     //Lights
-    var sunlight = new THREE.PointLight( 0xffffff, 1, 10000 );
-    sunlight.position.set( 0, 0, 0 );
-    var light = new THREE.AmbientLight( 0xffffff, 1 );
+    var sunlight = new THREE.PointLight(0xffffff, 1, 10000);
+    sunlight.position.set(0, 0, 0);
+    var light = new THREE.AmbientLight(0xffffff, 1);
     scene.add(sunlight);
 
 
@@ -200,14 +206,14 @@
     function createPlanet(p) {
         var img = new THREE.TextureLoader().load(p.texture);
         geometry = new THREE.SphereBufferGeometry(p.size * planetSize, 32, 32);
-        if (p.name === "Sun"){
+        if (p.name === "Sun") {
             material = new THREE.MeshBasicMaterial({map: img});
         } else {
             material = new THREE.MeshPhongMaterial({map: img});
         }
 
         //Bump
-        if (p.id <= 4 && p.id > 0){
+        if (p.id <= 4 && p.id > 0) {
             material.bumpMap = THREE.ImageUtils.loadTexture(p.bump);
             material.bumpScale = 4
         }
@@ -251,14 +257,14 @@
 
     function setLight() {
 
-        if (displaySunlight === 0){
+        if (displaySunlight === 0) {
             scene.remove(light);
-            scene.add( sunlight );
+            scene.add(sunlight);
             displaySunlight = 1;
         } else {
             //Ambientlight
             scene.remove(sunlight);
-            scene.add( light );
+            scene.add(light);
             displaySunlight = 0;
         }
     }
