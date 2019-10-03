@@ -28,6 +28,7 @@
     <button onclick="displayOrbits()">Orbits</button>
     <button onclick="displayAxis()">Axis</button>
     <button onclick="setLight()">Lights</button>
+    <button onclick="setBackground()">Background</button>
     <button onclick="speedDown()">- Speed</button>
     <button onclick="speedUp()">+ Speed</button>
     <div style="color: aqua" id='seconds-counter'></div>
@@ -44,7 +45,7 @@
     //TODO distances/sizes
     //TODO Far side of planets not completly dark
     //TODO Stars background
-    //TODO Buttons inside the image
+    //TODO Open/Close buttons menu
 
     //2nd
     //TODO Matching color orbits
@@ -62,12 +63,16 @@
     var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     var controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-    camera.position.set(0, 0, 800);
+    var x = 0;
+    var y = 0;
+    var z = 400;
+
+    camera.position.set(x, y, z);
     camera.lookAt(0, 0, 0);
     controls.update();
 
-    var planetDistanceFromSun = 1;
-    var planetSize = 1;
+    var planetDistanceFromSun = 1/2;
+    var planetSize = 1/2;
     var sunSize = 0.5;
     var earthSize = 1;
     var time = 1;
@@ -79,6 +84,8 @@
     var axisHelper = new THREE.AxesHelper(750);
 
     var displaySunlight = 1;
+
+    var isBackgroundDisplay = 1;
 
 
     // 1 second = 1 day
@@ -179,6 +186,15 @@
 
     var solarSystem = new Array(9);
 
+
+    //Background
+    var bgGeometry = new THREE.SphereGeometry(z, 32, 32);
+    var bgMaterial = new THREE.MeshBasicMaterial();
+    bgMaterial.map = THREE.ImageUtils.loadTexture('./textures/starfield_bg3.png');
+    bgMaterial.side = THREE.BackSide;
+    var bg  = new THREE.Mesh(bgGeometry, bgMaterial);
+    scene.add(bg);
+
     //Creating planets
     for (i = 0; i < solarSystemData.length; i++) {
         var planet = solarSystemData[i];
@@ -187,7 +203,7 @@
     }
 
     //Lights
-    var sunlight = new THREE.PointLight(0xffffff, 1, 10000);
+    var sunlight = new THREE.PointLight(0xffffff, 1, 10*z);
     sunlight.position.set(0, 0, 0);
     var light = new THREE.AmbientLight(0xffffff, 1);
     scene.add(sunlight);
@@ -215,7 +231,7 @@
         //Bump
         if (p.id <= 4 && p.id > 0) {
             material.bumpMap = THREE.ImageUtils.loadTexture(p.bump);
-            material.bumpScale = 4
+            material.bumpScale = planetSize/30
         }
 
         var planet = new THREE.Mesh(geometry, material);
@@ -223,6 +239,17 @@
 
         return planet
     }
+
+    function setBackground() {
+        if (isBackgroundDisplay === 0){
+            scene.add(bg);
+            isBackgroundDisplay = 1;
+        } else {
+            scene.remove(bg);
+            isBackgroundDisplay = 0;
+        }
+    }
+
 
     function displayOrbits() {
         if (areOrbitsDisplay === 0) {
