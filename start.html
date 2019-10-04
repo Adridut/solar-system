@@ -272,23 +272,30 @@
 
 
     //Lights
+    var displaySunlight = 1;
+
     var sunlight = new THREE.PointLight(0xffffff, 1, 10000 * planetDistanceFromSun);
     sunlight.position.set(0, 0, 0);
-    var light = new THREE.AmbientLight(0xffffff, 1);
     scene.add(sunlight);
 
-    var displaySunlight = 1;
+    var weakLight = new THREE.AmbientLight(0xffffff, 0.1);
+    scene.add(weakLight);
+
+    var fullLight = new THREE.AmbientLight(0xffffff, 1);
+
 
     function setLight() {
 
         if (displaySunlight === 0) {
-            scene.remove(light);
+            scene.remove(fullLight);
             scene.add(sunlight);
+            scene.add(weakLight);
             displaySunlight = 1;
         } else {
             //Ambientlight
             scene.remove(sunlight);
-            scene.add(light);
+            scene.remove(weakLight);
+            scene.add(fullLight);
             displaySunlight = 0;
         }
     }
