@@ -44,7 +44,6 @@
     //TODO Buttons to change planets sizes and distances
     //TODO distances/sizes
     //TODO Far side of planets not completly dark
-    //TODO Stars background
     //TODO Open/Close buttons menu
 
     //2nd
@@ -71,30 +70,17 @@
     camera.lookAt(0, 0, 0);
     controls.update();
 
-    var planetDistanceFromSun = 1/2;
-    var planetSize = 1/2;
+    var planetDistanceFromSun = 1 / 2;
+    var planetSize = 1 / 2;
     var sunSize = 0.5;
     var earthSize = 1;
     var time = 1;
-
-    var areOrbitsDisplay = 0;
-    var orbits = new Array(8);
-
-    var areAxisDisplay = 0;
-    var axisHelper = new THREE.AxesHelper(750);
-
-    var displaySunlight = 1;
-
-    var isBackgroundDisplay = 1;
 
 
     // 1 second = 1 day
     var speedAdjustment = 0.105;
     var rotationAjustment = 0.11;
-
-
     //O.541 * days = rotation speed
-
 
     //Planets data
     var solarSystemData = [
@@ -187,27 +173,12 @@
     var solarSystem = new Array(9);
 
 
-    //Background
-    var bgGeometry = new THREE.SphereGeometry(z, 32, 32);
-    var bgMaterial = new THREE.MeshBasicMaterial();
-    bgMaterial.map = THREE.ImageUtils.loadTexture('./textures/starfield_bg3.png');
-    bgMaterial.side = THREE.BackSide;
-    var bg  = new THREE.Mesh(bgGeometry, bgMaterial);
-    scene.add(bg);
-
     //Creating planets
     for (i = 0; i < solarSystemData.length; i++) {
         var planet = solarSystemData[i];
         solarSystem[i] = createPlanet(planet);
         scene.add(solarSystem[i]);
     }
-
-    //Lights
-    var sunlight = new THREE.PointLight(0xffffff, 1, 10*z);
-    sunlight.position.set(0, 0, 0);
-    var light = new THREE.AmbientLight(0xffffff, 1);
-    scene.add(sunlight);
-
 
     //Saturn ring
     // var ringText = new THREE.TextureLoader().load('./textures/saturnringcolorthumb.jpg');
@@ -231,7 +202,7 @@
         //Bump
         if (p.id <= 4 && p.id > 0) {
             material.bumpMap = THREE.ImageUtils.loadTexture(p.bump);
-            material.bumpScale = planetSize/30
+            material.bumpScale = planetSize / 30
         }
 
         var planet = new THREE.Mesh(geometry, material);
@@ -240,8 +211,17 @@
         return planet
     }
 
+    //Background
+    var bgGeometry = new THREE.SphereGeometry(z * 1.2, 32, 32);
+    var bgMaterial = new THREE.MeshBasicMaterial();
+    bgMaterial.map = THREE.ImageUtils.loadTexture('./textures/starfield_bg4.png');
+    bgMaterial.side = THREE.BackSide;
+    var bg = new THREE.Mesh(bgGeometry, bgMaterial);
+
+    var isBackgroundDisplay = 0;
+
     function setBackground() {
-        if (isBackgroundDisplay === 0){
+        if (isBackgroundDisplay === 0) {
             scene.add(bg);
             isBackgroundDisplay = 1;
         } else {
@@ -251,18 +231,23 @@
     }
 
 
+    var areOrbitsDisplay = 0;
+    var orbits = new Array(8);
+
+    //Creating orbits
+    for (i = 0; i < solarSystem.length - 1; i++) {
+        var s = solarSystemData[i];
+        var geometry = new THREE.TorusBufferGeometry(-(s.position) * planetDistanceFromSun, (s.size * planetSize / 10), 16, 100);
+        var material = new THREE.MeshBasicMaterial({color: 0x6897bb});
+        orbits[i] = new THREE.Mesh(geometry, material);
+    }
+
     function displayOrbits() {
         if (areOrbitsDisplay === 0) {
-            areOrbitsDisplay = 1;
-
             for (i = 0; i < solarSystem.length - 1; i++) {
-                var s = solarSystemData[i];
-                var geometry = new THREE.TorusBufferGeometry(-(s.position) * planetDistanceFromSun, (s.size * planetSize / 10), 16, 100);
-                var material = new THREE.MeshBasicMaterial({color: 0x6897bb});
-                orbits[i] = new THREE.Mesh(geometry, material);
                 scene.add(orbits[i]);
             }
-
+            areOrbitsDisplay = 1;
         } else {
             areOrbitsDisplay = 0;
 
@@ -271,6 +256,9 @@
             }
         }
     }
+
+    var areAxisDisplay = 0;
+    var axisHelper = new THREE.AxesHelper(z);
 
     function displayAxis() {
         if (areAxisDisplay === 0) {
@@ -281,6 +269,15 @@
             scene.remove(axisHelper);
         }
     }
+
+
+    //Lights
+    var sunlight = new THREE.PointLight(0xffffff, 1, 10000 * planetDistanceFromSun);
+    sunlight.position.set(0, 0, 0);
+    var light = new THREE.AmbientLight(0xffffff, 1);
+    scene.add(sunlight);
+
+    var displaySunlight = 1;
 
     function setLight() {
 
