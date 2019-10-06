@@ -38,7 +38,6 @@
 
     //1st
     //TODO Saturn and Uranus rings (ring or torus geo) startun.add(ring)
-    //TODO Earth maps
     //TODO onClick
     //TODO Improve time representation/modification
     //TODO Buttons to change planets sizes and distances
@@ -47,11 +46,11 @@
 
     //2nd
     //TODO Matching color orbits
-    //TODO add the Moon
+    //TODO Add the Moon
 
     //3rd
-    //TODO dwarf planets and satelites
-    //TODO asteroide belt
+    //TODO Dwarf planets and satelites
+    //TODO Asteroide belt
 
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -130,11 +129,20 @@
             id: 4
         },
         {
+            name: "EarthCities",
+            texture: './textures/earthlights.jpg',
+            bump: './textures/earthbump.jpg',
+            size: 2.6 * earthSize,
+            position: -303.2,
+            speed: 365.26,
+            rotation: 1
+        },
+        {
             name: "Earth",
             texture: './textures/earthmap.jpg',
             bump: './textures/earthbump.jpg',
             size: 2.6 * earthSize,
-            position: -303.2,
+            position: -303.2 + (earthSize*planetSize)/10,
             speed: 365.26,
             rotation: 1,
             id: 3
@@ -197,7 +205,7 @@
     function createPlanet(p) {
         var img = new THREE.TextureLoader().load(p.texture);
         geometry = new THREE.SphereBufferGeometry(p.size * planetSize, 32, 32);
-        if (p.name === "Sun") {
+        if (p.name === "Sun" || p.name === "EarthCities") {
             material = new THREE.MeshBasicMaterial({map: img});
         } else {
             material = new THREE.MeshPhongMaterial({map: img});
