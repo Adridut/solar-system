@@ -142,7 +142,7 @@
             texture: './textures/earthmap.jpg',
             bump: './textures/earthbump.jpg',
             size: 2.6 * earthSize,
-            position: -303.2 + (earthSize*planetSize)/10,
+            position: -303.2 + (earthSize * planetSize) / 10,
             speed: 365.26,
             rotation: 1,
             id: 3
@@ -188,8 +188,7 @@
     }
 
     //Add earth clouds
-    solarSystem[5].add(createEarthClouds());
-
+    solarSystem[6].add(createEarthClouds());
 
 
     //Saturn ring
@@ -211,13 +210,13 @@
             material = new THREE.MeshPhongMaterial({map: img});
         }
 
-        //Bump
+        //Bump for solid planets
         if (p.id <= 4 && p.id > 0) {
             material.bumpMap = THREE.ImageUtils.loadTexture(p.bump);
             material.bumpScale = planetSize / 30
         }
 
-        //Specular
+        //Specular for the Earth
         if (p.name === "Earth") {
             material.specularMap = THREE.ImageUtils.loadTexture('./textures/earthspec.jpg');
             material.specular = new THREE.Color('#222222'); //Color more dark => Less glowing
@@ -234,45 +233,45 @@
     function createEarthClouds() {
 
         // create destination canvas
-        var canvasResult	= document.createElement('canvas');
-        canvasResult.width	= 1024;
-        canvasResult.height	= 512;
-        var contextResult	= canvasResult.getContext('2d');
+        var canvasResult = document.createElement('canvas');
+        canvasResult.width = 1024;
+        canvasResult.height = 512;
+        var contextResult = canvasResult.getContext('2d');
 
         // load earthcloudmap
-        var imageMap	= new Image();
-        imageMap.addEventListener("load", function() {
+        var imageMap = new Image();
+        imageMap.addEventListener("load", function () {
 
             // create dataMap ImageData for earthcloudmap
-            var canvasMap	= document.createElement('canvas');
-            canvasMap.width	= imageMap.width;
-            canvasMap.height= imageMap.height;
-            var contextMap	= canvasMap.getContext('2d');
+            var canvasMap = document.createElement('canvas');
+            canvasMap.width = imageMap.width;
+            canvasMap.height = imageMap.height;
+            var contextMap = canvasMap.getContext('2d');
             contextMap.drawImage(imageMap, 0, 0);
-            var dataMap	= contextMap.getImageData(0, 0, canvasMap.width, canvasMap.height);
+            var dataMap = contextMap.getImageData(0, 0, canvasMap.width, canvasMap.height);
 
             // load earthcloudmaptrans
-            var imageTrans	= new Image();
-            imageTrans.addEventListener("load", function(){
+            var imageTrans = new Image();
+            imageTrans.addEventListener("load", function () {
                 // create dataTrans ImageData for earthcloudmaptrans
-                var canvasTrans		= document.createElement('canvas');
-                canvasTrans.width	= imageTrans.width;
-                canvasTrans.height	= imageTrans.height;
-                var contextTrans	= canvasTrans.getContext('2d');
+                var canvasTrans = document.createElement('canvas');
+                canvasTrans.width = imageTrans.width;
+                canvasTrans.height = imageTrans.height;
+                var contextTrans = canvasTrans.getContext('2d');
                 contextTrans.drawImage(imageTrans, 0, 0);
-                var dataTrans		= contextTrans.getImageData(0, 0, canvasTrans.width, canvasTrans.height);
+                var dataTrans = contextTrans.getImageData(0, 0, canvasTrans.width, canvasTrans.height);
                 // merge dataMap + dataTrans into dataResult
-                var dataResult		= contextMap.createImageData(canvasMap.width, canvasMap.height);
-                for(var y = 0, offset = 0; y < imageMap.height; y++){
-                    for(var x = 0; x < imageMap.width; x++, offset += 4){
-                        dataResult.data[offset+0]	= dataMap.data[offset+0];
-                        dataResult.data[offset+1]	= dataMap.data[offset+1];
-                        dataResult.data[offset+2]	= dataMap.data[offset+2];
-                        dataResult.data[offset+3]	= 255 - dataTrans.data[offset+0];
+                var dataResult = contextMap.createImageData(canvasMap.width, canvasMap.height);
+                for (var y = 0, offset = 0; y < imageMap.height; y++) {
+                    for (var x = 0; x < imageMap.width; x++, offset += 4) {
+                        dataResult.data[offset + 0] = dataMap.data[offset + 0];
+                        dataResult.data[offset + 1] = dataMap.data[offset + 1];
+                        dataResult.data[offset + 2] = dataMap.data[offset + 2];
+                        dataResult.data[offset + 3] = 255 - dataTrans.data[offset + 0];
                     }
                 }
                 // update texture with result
-                contextResult.putImageData(dataResult,0,0);
+                contextResult.putImageData(dataResult, 0, 0);
                 cloudMaterial.map.needsUpdate = true;
             });
             imageTrans.src = './textures/earthcloudmaptrans.jpg';
@@ -320,6 +319,8 @@
         var geometry = new THREE.TorusBufferGeometry(-(s.position) * planetDistanceFromSun, (s.size * planetSize / 10), 16, 100);
         var material = new THREE.MeshBasicMaterial({color: 0x6897bb});
         orbits[i] = new THREE.Mesh(geometry, material);
+        //Orbits are looking down
+        orbits[i].lookAt(0, -100, 0);
     }
 
     function displayOrbits() {
@@ -382,11 +383,12 @@
 
     function rotationAroundSun() {
         for (i = 0; i < solarSystem.length - 1; i++) {
-            solarSystem[i].position.x += ((solarSystem[i].position.y / solarSystemData[i].speed * speedAdjustment) * time);
-            solarSystem[i].position.y += -((solarSystem[i].position.x / solarSystemData[i].speed * speedAdjustment) * time);
+            solarSystem[i].position.x += ((solarSystem[i].position.z / solarSystemData[i].speed * speedAdjustment) * time);
+            solarSystem[i].position.z += -((solarSystem[i].position.x / solarSystemData[i].speed * speedAdjustment) * time);
         }
-        // saturnRing.position.x += ((saturnRing.position.y / solarSystemData[2].speed * speedAdjustment) * time);
-        // saturnRing.position.y += -((saturnRing.position.x / solarSystemData[2].speed * speedAdjustment) * time);
+
+        // saturnRing.position.x += ((saturnRing.position.z / solarSystemData[2].speed * speedAdjustment) * time);
+        // saturnRing.position.z += -((saturnRing.position.x / solarSystemData[2].speed * speedAdjustment) * time);
     }
 
     function selfRotation() {
