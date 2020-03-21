@@ -32,17 +32,22 @@
     <button onclick="speedDown()">- Speed</button>
     <button onclick="speedUp()">+ Speed</button>
     <div style="color: aqua" id='seconds-counter'></div>
+    <div style="color: aqua" id='track'></div>
 </div>
 
 <script>
 
     //1st
-    //TODO Saturn and Uranus rings (ring or torus geo) startun.add(ring)
+    //TODO Clean Up
     //TODO onClick
     //TODO Improve time representation/modification
     //TODO Buttons to change planets sizes and distances
     //TODO distances/sizes
     //TODO Open/Close buttons menu
+    //TODO Axis position
+    //TODO Sun glow
+    //TODO remove earth night map from list and use earth.add(nightmap)
+    //TODO update textures
 
     //2nd
     //TODO Matching color orbits
@@ -64,7 +69,7 @@
     var y = 0;
     var z = 400;
 
-    camera.position.set(x, y, z);
+    camera.position.set(x, z, z);
     camera.lookAt(0, 0, 0);
     controls.update();
 
@@ -72,13 +77,24 @@
     var planetSize = 1 / 2;
     var sunSize = 0.5;
     var earthSize = 1;
-    var time = 1;
+    var time = 0.01;
+
+    g = 6.6743e-11;
+    s = 26 * time;
+    sX = 26 * time;
+    sZ = 26 * time;
+
 
 
     // 1 second = 1 day
     var speedAdjustment = 0.105;
     var rotationAjustment = 0.11;
     //O.541 * days = rotation speed
+
+    var seconds = 0;
+    var modelTime = 0;
+    var el = document.getElementById('seconds-counter');
+    var t = document.getElementById('track');
 
     //Planets data
     var solarSystemData = [
@@ -89,6 +105,7 @@
             position: -731.1,
             speed: 60190.03,
             rotation: 0.671,
+            mass: 1.02413*10^26,
             id: 8
         },
         {
@@ -98,7 +115,10 @@
             position: -604.6,
             speed: 30687.15,
             rotation: -0.718,
-            id: 7
+            mass: 8.6810*10^25,
+            id: 7,
+            ringTexture: './textures/uranusringcolour.jpg',
+            ringTrans:'./textures/uranusringtrans.gif'
         },
         {
             name: "Saturn",
@@ -107,16 +127,25 @@
             position: -474.2,
             speed: 10755.70,
             rotation: 0.437,
-            id: 6
+            mass: 5.6834*10^26,
+            id: 6,
+            ringTexture: './textures/saturnringcolor.jpg',
+            ringTrans: './textures/saturnringpattern.gif'
         },
         {
             name: "Jupiter",
             texture: './textures/jupitermap.jpg',
             size: 28.5,
             position: -379.1,
+            // position: 778340000,
             speed: 4332.82,
             rotation: 0.423,
-            id: 5
+            mass: 1.8982*10^27,
+            id: 5,
+            dValue: 1.496 * Math.pow(10, 11),
+            dSpeed: 0,
+            aValue: Math.PI / 6,
+            aSpeed: 1.990986 *  Math.pow(10, -7)
         },
         {
             name: "Mars",
@@ -126,15 +155,17 @@
             position: -312.4,
             speed: 686.98,
             rotation: 1.02,
+            mass: 6.4171 * 10^23,
             id: 4
         },
         {
-            name: "EarthCities",
+            name: "EarthNightMap",
             texture: './textures/earthlights.jpg',
             bump: './textures/earthbump.jpg',
             size: 2.6 * earthSize,
             position: -303.2,
             speed: 365.26,
+            mass: 5.97237 * 10^24,
             rotation: 1
         },
         {
@@ -142,9 +173,10 @@
             texture: './textures/earthmap.jpg',
             bump: './textures/earthbump.jpg',
             size: 2.6 * earthSize,
-            position: -303.2 + (earthSize * planetSize) / 10,
+            position: -303.2 + (earthSize * planetSize) / 10, //A value is added to separate the two earth maps
             speed: 365.26,
             rotation: 1,
+            mass: 5.97237 * 10^24,
             id: 3
         },
         {
@@ -155,6 +187,7 @@
             position: -295.3,
             speed: 224.7,
             rotation: -243.02,
+            mass: 4.8675 * 10^24,
             id: 2
         },
         {
@@ -165,6 +198,7 @@
             position: -288.41,
             speed: 87.97,
             rotation: 58.55,
+            mass: 3.3011 * 10^23,
             id: 1
         },
         {
@@ -173,6 +207,7 @@
             size: 283.4 * sunSize,
             position: 0,
             rotation: 26,
+            mass: 1.9885*10^30,
             id: 0
         }
     ];
@@ -191,20 +226,137 @@
     solarSystem[6].add(createEarthClouds());
 
 
-    //Saturn ring
-    // var ringText = new THREE.TextureLoader().load('./textures/saturnringcolorthumb.jpg');
-    // var ringTransText = new THREE.TextureLoader().load('./textures/saturnringpatternthumb.jpg');
-    // var geometry = new THREE.RingBufferGeometry( solarSystemData[2].size + 8, solarSystemData[2].size + 2, 64 );
-    // var material = new THREE.MeshBasicMaterial( { map: ringText, side: THREE.DoubleSide} );
-    // var saturnRing = new THREE.Mesh( geometry, material );
-    // saturnRing.lookAt(new THREE.Vector3(0.5,-100,0));
-    // saturnRing.position.set(solarSystemData[2].position, 0, 0);
-    // scene.add( saturnRing );
+    _RingGeometry = function ( innerRadius, outerRadius, thetaSegments ) {
+
+        THREE.Geometry.call( this );
+
+        innerRadius	= innerRadius || 0;
+        outerRadius	= outerRadius || 50;
+        thetaSegments	= thetaSegments	|| 8;
+
+        var normal	= new THREE.Vector3( 0, 0, 1 );
+
+        for(var i = 0; i < thetaSegments; i++ ){
+            var angleLo	= (i / thetaSegments) *Math.PI*2;
+            var angleHi	= ((i+1) / thetaSegments) *Math.PI*2;
+
+            var vertex1	= new THREE.Vector3(innerRadius * Math.cos(angleLo), innerRadius * Math.sin(angleLo), 0);
+            var vertex2	= new THREE.Vector3(outerRadius * Math.cos(angleLo), outerRadius * Math.sin(angleLo), 0);
+            var vertex3	= new THREE.Vector3(innerRadius * Math.cos(angleHi), innerRadius * Math.sin(angleHi), 0);
+            var vertex4	= new THREE.Vector3(outerRadius * Math.cos(angleHi), outerRadius * Math.sin(angleHi), 0);
+
+            this.vertices.push( vertex1 );
+            this.vertices.push( vertex2 );
+            this.vertices.push( vertex3 );
+            this.vertices.push( vertex4 );
+
+
+            var vertexIdx	= i * 4;
+
+            // Create the first triangle
+            var face = new THREE.Face3(vertexIdx + 0, vertexIdx + 1, vertexIdx + 2, normal);
+            var uvs = [];
+
+            var uv = new THREE.Vector2(0, 0);
+            uvs.push(uv);
+            var uv = new THREE.Vector2(1, 0);
+            uvs.push(uv);
+            var uv = new THREE.Vector2(0, 1);
+            uvs.push(uv);
+
+            this.faces.push(face);
+            this.faceVertexUvs[0].push(uvs);
+
+            // Create the second triangle
+            var face = new THREE.Face3(vertexIdx + 2, vertexIdx + 1, vertexIdx + 3, normal);
+            var uvs = [];
+
+            var uv = new THREE.Vector2(0, 1);
+            uvs.push(uv);
+            var uv = new THREE.Vector2(1, 0);
+            uvs.push(uv);
+            var uv = new THREE.Vector2(1, 1);
+            uvs.push(uv);
+
+            this.faces.push(face);
+            this.faceVertexUvs[0].push(uvs);
+        }
+
+        // this.computeCentroids();
+        this.computeFaceNormals();
+
+        this.boundingSphere = new THREE.Sphere( new THREE.Vector3(), outerRadius );
+
+    };
+    _RingGeometry.prototype = Object.create( THREE.Geometry.prototype );
+
+    createRing	= function(width, height, texture, trans, innerRadius, outerRadius){
+        // create destination canvas
+        var canvasResult	= document.createElement('canvas');
+        canvasResult.width	= width;
+        canvasResult.height	= height;
+        var contextResult	= canvasResult.getContext('2d');
+
+        var imageMap	= new Image();
+        imageMap.addEventListener("load", function() {
+
+            var canvasMap	= document.createElement('canvas');
+            canvasMap.width	= imageMap.width;
+            canvasMap.height= imageMap.height;
+            var contextMap	= canvasMap.getContext('2d');
+            contextMap.drawImage(imageMap, 0, 0);
+            var dataMap	= contextMap.getImageData(0, 0, canvasMap.width, canvasMap.height);
+
+            var imageTrans	= new Image();
+            imageTrans.addEventListener("load", function(){
+                var canvasTrans		= document.createElement('canvas');
+                canvasTrans.width	= imageTrans.width;
+                canvasTrans.height	= imageTrans.height;
+                var contextTrans	= canvasTrans.getContext('2d');
+                contextTrans.drawImage(imageTrans, 0, 0);
+                var dataTrans		= contextTrans.getImageData(0, 0, canvasTrans.width, canvasTrans.height);
+                // merge dataMap + dataTrans into dataResult
+                var dataResult		= contextMap.createImageData(canvasResult.width, canvasResult.height);
+                for(var y = 0, offset = 0; y < imageMap.height; y++){
+                    for(var x = 0; x < imageMap.width; x++, offset += 4){
+                        dataResult.data[offset]	= dataMap.data[offset];
+                        dataResult.data[offset+1]	= dataMap.data[offset+1];
+                        dataResult.data[offset+2]	= dataMap.data[offset+2];
+                        dataResult.data[offset+3]	= 255 - dataTrans.data[offset]/2
+                    }
+                }
+                // update texture with result
+                contextResult.putImageData(dataResult,0,0);
+                material.map.needsUpdate = true;
+            });
+            imageTrans.src	= trans;
+        }, false);
+        imageMap.src	= texture;
+
+        var geometry	= new _RingGeometry(innerRadius, outerRadius, 64);
+        var material	= new THREE.MeshPhongMaterial({
+            map		: new THREE.Texture(canvasResult),
+            side		: THREE.DoubleSide,
+            transparent	: true,
+            opacity		: 0.8
+        });
+        var mesh	= new THREE.Mesh(geometry, material);
+        mesh.receiveShadow = true;
+        mesh.castShadow = true;
+        mesh.lookAt(new THREE.Vector3(0.5,-4,1));
+        return mesh
+    };
+
+    solarSystem[1].add(createRing(1024, 72, solarSystemData[1].ringTexture, solarSystemData[1].ringTrans,
+        solarSystemData[1].size - 1, solarSystemData[1].size - 3));
+
+    solarSystem[2].add(createRing(915, 64, solarSystemData[2].ringTexture, solarSystemData[2].ringTrans,
+        solarSystemData[2].size - 4, solarSystemData[2].size - 8));
 
     function createPlanet(p) {
         var img = new THREE.TextureLoader().load(p.texture);
         geometry = new THREE.SphereBufferGeometry(p.size * planetSize, 32, 32);
-        if (p.name === "Sun" || p.name === "EarthCities") {
+        if (p.name === "Sun" || p.name === "EarthNightMap") {
             material = new THREE.MeshBasicMaterial({map: img});
         } else {
             material = new THREE.MeshPhongMaterial({map: img});
@@ -224,6 +376,8 @@
 
 
         var planet = new THREE.Mesh(geometry, material);
+        planet.receiveShadow = true;
+        planet.castShadow = true;
         planet.position.set(p.position * planetDistanceFromSun, 0, 0);
 
         return planet
@@ -264,10 +418,10 @@
                 var dataResult = contextMap.createImageData(canvasMap.width, canvasMap.height);
                 for (var y = 0, offset = 0; y < imageMap.height; y++) {
                     for (var x = 0; x < imageMap.width; x++, offset += 4) {
-                        dataResult.data[offset + 0] = dataMap.data[offset + 0];
+                        dataResult.data[offset] = dataMap.data[offset];
                         dataResult.data[offset + 1] = dataMap.data[offset + 1];
                         dataResult.data[offset + 2] = dataMap.data[offset + 2];
-                        dataResult.data[offset + 3] = 255 - dataTrans.data[offset + 0];
+                        dataResult.data[offset + 3] = 255 - dataTrans.data[offset];
                     }
                 }
                 // update texture with result
@@ -381,14 +535,76 @@
         }
     }
 
+
+
     function rotationAroundSun() {
+
         for (i = 0; i < solarSystem.length - 1; i++) {
             solarSystem[i].position.x += ((solarSystem[i].position.z / solarSystemData[i].speed * speedAdjustment) * time);
             solarSystem[i].position.z += -((solarSystem[i].position.x / solarSystemData[i].speed * speedAdjustment) * time);
         }
 
-        // saturnRing.position.x += ((saturnRing.position.z / solarSystemData[2].speed * speedAdjustment) * time);
-        // saturnRing.position.z += -((saturnRing.position.x / solarSystemData[2].speed * speedAdjustment) * time);
+        //for (i = 0; i < solarSystem.length - 1; i++) {
+            // x = solarSystem[i].position.x;
+            // z = solarSystem[i].position.z;
+            // sunX = solarSystem[0].position.x;
+            // sunZ = solarSystem[0].position.z;
+            // m = solarSystem[i].mass;
+            // sunM = solarSystem[0].mass;
+            // d = Math.sqrt(((x - sunX)^2 + (z - sunZ)^2));
+            // dX = sunX - x;
+            // dZ = sunZ - z;
+            // g = (sunM*m)/d;
+            // v = g * time / d^3; //velocity
+            // f = d*v;
+            // fX = dX*v;
+            // fZ = dZ * v;
+            //
+            // solarSystem[i].position.x += (sX*time-fX*time/2)/10^10; //position (m) = vitesse*temps + accélération*temps^2/2 (=vitesse*temps/2 dans ce cas)
+            // solarSystem[i].position.z += (sZ*time-fZ*time/2)/10^10; //La position doit être calculée avec la vitesse non modifiée
+            //
+            // sX += fX; //le calcul de la vitesse a déjà été fait dans fX. Pas besoin de - car la direction est déjà dans dX
+            // sZ += fZ;
+
+        //}
+
+
+        // // Calculate new distance
+        // var distanceAcceleration = calculateDistanceAcceleration(solarSystem[3]);
+        // solarSystem[3].dDpeed = newValue(solarSystem[3].dSpeed, modelTime, distanceAcceleration)/10^100;
+        // solarSystem[3].dValue = newValue(solarSystem[3].dValue, modelTime, solarSystem[3].dSpeed)/10^100;
+        //
+        // // Calculate new angle
+        // var angleAcceleration = calculateAngleAcceleration(solarSystem[3]);
+        // solarSystem[3].aSpeed = newValue(solarSystem[3].aSpeed, modelTime, angleAcceleration)/10^100;
+        // solarSystem[3].aValue = newValue(solarSystem[3].aValue, modelTime, solarSystem[3].aSpeed)/10^100;
+        //
+        // solarSystem[3].position.x = (solarSystem[3].dValue * Math.cos(solarSystem[3].aValue));
+        // solarSystem[3].position.z = (solarSystem[3].dValue * Math.sin(solarSystem[3].aValue));
+        //
+        // var geometry = new THREE.SphereBufferGeometry( 5, 32, 32 );
+        // var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+        // var sphere = new THREE.Mesh( geometry, material );
+        // sphere.position.set(solarSystem[3].position.x, 0, solarSystem[3].position.z);
+        // scene.add( sphere );
+        //
+        // t.innerText = "JUPITER x: "+solarSystem[3].position.x.toFixed(5)+
+        //     " y: "+solarSystem[3].position.y.toFixed(5)+
+        //     " z: "+solarSystem[3].position.z.toFixed(5);
+
+    }
+
+    function calculateDistanceAcceleration(state) {
+        return state.dValue * Math.pow(state.aSpeed, 2) -
+            (g * 1.98855 * Math.pow(10, 30)) / Math.pow(state.dValue, 2);
+    }
+
+    function calculateAngleAcceleration(state) {
+        return -2.0 * state.dSpeed * state.aSpeed / state.dValue;
+    }
+
+    function newValue(currentValue, time, derivative) {
+        return (currentValue + time * derivative);
     }
 
     function selfRotation() {
@@ -397,9 +613,6 @@
         }
     }
 
-    var seconds = 0;
-    var modelTime = 0;
-    var el = document.getElementById('seconds-counter');
 
     //Timer
     function incrementSeconds() {
