@@ -23,6 +23,7 @@
 
 <script src="js/OrbitControls.js"></script>
 
+<div id="container"></div>
 <!-- Buttons. with 'position: absolute', the buttons stays in the image  -->
 <div style="position: absolute">
     <button onclick="displayOrbits()">Orbits</button>
@@ -33,6 +34,7 @@
     <button onclick="speedUp()">+ Speed</button>
     <div style="color: aqua" id='seconds-counter'></div>
     <div style="color: aqua" id='track'></div>
+    <div style="color: yellow" id='pn'></div>
 </div>
 
 <script>
@@ -69,7 +71,7 @@
     var y = 0;
     var z = 400;
 
-    camera.position.set(x, z, z);
+    camera.position.set(x, y, z);
     camera.lookAt(0, 0, 0);
     controls.update();
 
@@ -94,7 +96,6 @@
     var seconds = 0;
     var modelTime = 0;
     var el = document.getElementById('seconds-counter');
-    var t = document.getElementById('track');
 
     //Planets data
     var solarSystemData = [
@@ -543,55 +544,6 @@
             solarSystem[i].position.x += ((solarSystem[i].position.z / solarSystemData[i].speed * speedAdjustment) * time);
             solarSystem[i].position.z += -((solarSystem[i].position.x / solarSystemData[i].speed * speedAdjustment) * time);
         }
-
-        //for (i = 0; i < solarSystem.length - 1; i++) {
-            // x = solarSystem[i].position.x;
-            // z = solarSystem[i].position.z;
-            // sunX = solarSystem[0].position.x;
-            // sunZ = solarSystem[0].position.z;
-            // m = solarSystem[i].mass;
-            // sunM = solarSystem[0].mass;
-            // d = Math.sqrt(((x - sunX)^2 + (z - sunZ)^2));
-            // dX = sunX - x;
-            // dZ = sunZ - z;
-            // g = (sunM*m)/d;
-            // v = g * time / d^3; //velocity
-            // f = d*v;
-            // fX = dX*v;
-            // fZ = dZ * v;
-            //
-            // solarSystem[i].position.x += (sX*time-fX*time/2)/10^10; //position (m) = vitesse*temps + accélération*temps^2/2 (=vitesse*temps/2 dans ce cas)
-            // solarSystem[i].position.z += (sZ*time-fZ*time/2)/10^10; //La position doit être calculée avec la vitesse non modifiée
-            //
-            // sX += fX; //le calcul de la vitesse a déjà été fait dans fX. Pas besoin de - car la direction est déjà dans dX
-            // sZ += fZ;
-
-        //}
-
-
-        // // Calculate new distance
-        // var distanceAcceleration = calculateDistanceAcceleration(solarSystem[3]);
-        // solarSystem[3].dDpeed = newValue(solarSystem[3].dSpeed, modelTime, distanceAcceleration)/10^100;
-        // solarSystem[3].dValue = newValue(solarSystem[3].dValue, modelTime, solarSystem[3].dSpeed)/10^100;
-        //
-        // // Calculate new angle
-        // var angleAcceleration = calculateAngleAcceleration(solarSystem[3]);
-        // solarSystem[3].aSpeed = newValue(solarSystem[3].aSpeed, modelTime, angleAcceleration)/10^100;
-        // solarSystem[3].aValue = newValue(solarSystem[3].aValue, modelTime, solarSystem[3].aSpeed)/10^100;
-        //
-        // solarSystem[3].position.x = (solarSystem[3].dValue * Math.cos(solarSystem[3].aValue));
-        // solarSystem[3].position.z = (solarSystem[3].dValue * Math.sin(solarSystem[3].aValue));
-        //
-        // var geometry = new THREE.SphereBufferGeometry( 5, 32, 32 );
-        // var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-        // var sphere = new THREE.Mesh( geometry, material );
-        // sphere.position.set(solarSystem[3].position.x, 0, solarSystem[3].position.z);
-        // scene.add( sphere );
-        //
-        // t.innerText = "JUPITER x: "+solarSystem[3].position.x.toFixed(5)+
-        //     " y: "+solarSystem[3].position.y.toFixed(5)+
-        //     " z: "+solarSystem[3].position.z.toFixed(5);
-
     }
 
     function calculateDistanceAcceleration(state) {
@@ -636,7 +588,57 @@
             + modelTime + " days according to this model. \n 1 real second = " + time + " model day(s)";
     }
 
+    var raycaster = new THREE.Raycaster();
+    var mouse = new THREE.Vector2(), INTERSECTED;
+
+    container = document.createElement( 'div' );
+    document.body.appendChild( container );
+
+    click = false;
+    var pn = document.getElementById('pn');
+    document.addEventListener( 'click', onDocumentClick, false );
+    document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+    // window.addEventListener( 'resize', onWindowResize, false );
+
+    function onWindowResize() {
+
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize( window.innerWidth, window.innerHeight );
+
+    }
+
+    function onDocumentMouseMove( event ) {
+
+        event.preventDefault();
+        // calculate mouse position in normalized device coordinates
+        // (-1 to +1) for both components
+        click = false;
+
+        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+    }
+
+    function onDocumentClick( event ) {
+
+        event.preventDefault();
+        // calculate mouse position in normalized device coordinates
+        // (-1 to +1) for both components
+
+        click = true;
+
+        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+    }
+
+
+
+
     function animate() {
+
         requestAnimationFrame(animate);
 
         rotationAroundSun();
@@ -644,8 +646,43 @@
 
         controls.update();
 
-        renderer.render(scene, camera);
+        render();
     }
+
+    function render(){
+
+        raycaster.setFromCamera( mouse, camera );
+
+        // calculate objects intersecting the picking ray
+        var intersects = raycaster.intersectObjects( scene.children );
+
+        i = 0;
+
+        if (intersects[0]) {
+            while (i < solarSystem.length) {
+                if (intersects[0].object === solarSystem[i]) {
+                    pn.innerText = solarSystemData[i].name;
+
+                    if (click) {
+                        console.log(solarSystemData[i].name);
+                        camera.position.set(solarSystem[i].position.x, solarSystem[i].position.y, solarSystem[i].position.z + 400);
+                        camera.lookAt(solarSystem[i].position.x, solarSystem[i].position.y, solarSystem[i].position.z);
+                        controls.update();
+                        click = false
+                    }
+                }
+                i = i + 1;
+            }
+        } else {
+            pn.innerText = '';
+        }
+
+
+
+        renderer.render(scene, camera);
+
+    }
+
 
     animate();
 </script>
