@@ -86,8 +86,6 @@
     sX = 26 * time;
     sZ = 26 * time;
 
-
-
     // 1 second = 1 day
     var speedAdjustment = 0.105;
     var rotationAjustment = 0.11;
@@ -657,6 +655,7 @@
         var intersects = raycaster.intersectObjects( scene.children );
 
         i = 0;
+        j = 0;
 
         if (intersects[0]) {
             while (i < solarSystem.length) {
@@ -665,9 +664,14 @@
 
                     if (click) {
                         console.log(solarSystemData[i].name);
-                        camera.position.set(solarSystem[i].position.x, solarSystem[i].position.y, solarSystem[i].position.z + 400);
-                        camera.lookAt(solarSystem[i].position.x, solarSystem[i].position.y, solarSystem[i].position.z);
-                        controls.update();
+                        newX = solarSystem[i].position.x;
+                        while (j < solarSystem.length){
+                            solarSystem[j].position.set(solarSystem[j].position.x - newX, 0, 0);
+                            j = j + 1;
+                        }
+                        // camera.position.set(solarSystem[i].position.x, solarSystem[i].position.y, solarSystem[i].position.z + 400);
+                        // camera.lookAt(solarSystem[i].position.x, solarSystem[i].position.y, solarSystem[i].position.z);
+                        // controls.update();
                         click = false
                     }
                 }
