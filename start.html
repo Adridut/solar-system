@@ -666,7 +666,10 @@
                         console.log(solarSystemData[i].name);
                         newX = solarSystem[i].position.x;
                         while (j < solarSystem.length){
+                            //TODO make sure planets still rotate around sun and not the new (0,0,0) planet
                             solarSystem[j].position.set(solarSystem[j].position.x - newX, 0, 0);
+                            sunlight.position.set(solarSystem[9].position.x, solarSystem[9].position.y, solarSystem[9].position.z);
+                            camera.position.set(0, 0, solarSystemData[i].size);
                             j = j + 1;
                         }
                         // camera.position.set(solarSystem[i].position.x, solarSystem[i].position.y, solarSystem[i].position.z + 400);
