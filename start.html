@@ -16,12 +16,15 @@
     </style>
 </head>
 
-<body>
 
 <script src="js/three.min.js"></script>
 <!-- Einbinden der OrbitControls, um die Darstellung mit der Maus rotieren zu können. -->
 
-<script src="js/OrbitControls.js"></script>
+<script  src="js/OrbitControls.js"></script>
+
+
+
+
 
 <div id="container"></div>
 <!-- Buttons. with 'position: absolute', the buttons stays in the image  -->
@@ -38,6 +41,7 @@
 </div>
 
 <script>
+
 
     //1st
     //TODO Clean Up
@@ -58,6 +62,7 @@
     //3rd
     //TODO Dwarf planets and satelites
     //TODO Asteroide belt
+
 
     var renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -210,6 +215,7 @@
             id: 0
         }
     ];
+
 
     var solarSystem = new Array(9);
 
@@ -594,7 +600,7 @@
 
     click = false;
     var pn = document.getElementById('pn');
-    document.addEventListener( 'click', onDocumentClick, false );
+    document.addEventListener( 'dblclick', onDocumentClick, false );
     document.addEventListener( 'mousemove', onDocumentMouseMove, false );
     // window.addEventListener( 'resize', onWindowResize, false );
 
