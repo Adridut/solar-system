@@ -14,6 +14,7 @@
             display: block;
         }
     </style>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 
@@ -33,15 +34,16 @@
     <button onclick="displayAxis()">Axis</button>
     <button onclick="setLight()">Lights</button>
     <button onclick="setBackground()">Background</button>
-    <button onclick="speedDown()">- Speed</button>
-    <button onclick="speedUp()">+ Speed</button>
+    <div class="slidecontainer">
+        <b style="color: aqua">Speed</b>
+        <input type="range" min="0" max="100000" value="1" class="slider" id="speedSlider">
+    </div>
     <div style="color: aqua" id='seconds-counter'></div>
     <div style="color: aqua" id='track'></div>
     <div style="color: yellow" id='pn'></div>
 </div>
 
 <script>
-
 
     //1st
     //TODO Clean Up
@@ -54,6 +56,7 @@
     //TODO Sun glow
     //TODO remove earth night map from list and use earth.add(nightmap)
     //TODO update textures
+    //TODO Export style
 
     //2nd
     //TODO Matching color orbits
@@ -580,17 +583,13 @@
 
     var cancel = setInterval(incrementSeconds, 1000);
 
-    function speedUp() {
-        time *= 2;
-        el.innerText = "You have been here for " + seconds + " seconds, "
-            + modelTime + " days according to this model. \n 1 real second = " + time + " model day(s)";
-    }
 
-    function speedDown() {
-        time /= 2;
-        el.innerText = "You have been here for " + seconds + " seconds, "
-            + modelTime + " days according to this model. \n 1 real second = " + time + " model day(s)";
-    }
+    var slider = document.getElementById("speedSlider");
+
+    slider.oninput = function() {
+        time = this.value / 100;
+    };
+
 
     var raycaster = new THREE.Raycaster();
     var mouse = new THREE.Vector2(), INTERSECTED;
@@ -700,4 +699,6 @@
     animate();
 </script>
 </body>
+
 </html>
+
