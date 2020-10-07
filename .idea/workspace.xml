@@ -33,6 +33,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
@@ -110,7 +111,9 @@
       <workItem from="1586198073380" duration="1422000" />
       <workItem from="1588013066110" duration="184000" />
       <workItem from="1588779430199" duration="3079000" />
-      <workItem from="1601755321383" duration="3006000" />
+      <workItem from="1601755321383" duration="3285000" />
+      <workItem from="1601759530897" duration="315000" />
+      <workItem from="1602099268782" duration="3871000" />
     </task>
     <servers />
   </component>
@@ -119,5 +122,15 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="580" y="171" key="FileChooserDialogImpl" timestamp="1602101795526">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="580" y="171" key="FileChooserDialogImpl/0.0.1600.860@0.0.1600.860" timestamp="1602101795526" />
+    <state x="301" y="75" key="SettingsEditor" timestamp="1602102059442">
+      <screen x="0" y="0" width="1600" height="860" />
+    </state>
+    <state x="301" y="75" key="SettingsEditor/0.0.1600.860@0.0.1600.860" timestamp="1602102059442" />
   </component>
 </project>

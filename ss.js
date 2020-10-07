@@ -38,43 +38,78 @@ function setBackground() {
     }
 }
 
+function generatePlanets() {
+    for (i = 0; i < solarSystemData.length; i++) {
+        var planet = solarSystemData[i];
+        solarSystem[i] = createPlanet(planet);
+        scene.add(solarSystem[i]);
+    }
+
+    //Add earth clouds
+    solarSystem[6].add(createEarthClouds());
+
+    //Add rings
+    solarSystem[1].add(createRing(1024, 72, solarSystemData[1].ringTexture, solarSystemData[1].ringTrans,
+        solarSystemData[1].size - 1, solarSystemData[1].size - 3));
+
+    solarSystem[2].add(createRing(915, 64, solarSystemData[2].ringTexture, solarSystemData[2].ringTrans,
+        solarSystemData[2].size - 4, solarSystemData[2].size - 8));
+
+}
+
+function createOrbits() {
+    let orbits = new Array(8);
+    for (i = 0; i < solarSystem.length - 1; i++) {
+        var s = solarSystemData[i];
+        var geometry = new THREE.TorusBufferGeometry(-(s.position) * planetDistanceFromSun, (s.size * planetSize / 10), 16, 100);
+        var material = new THREE.MeshBasicMaterial({color: 0x6897bb});
+        orbits[i] = new THREE.Mesh(geometry, material);
+        //Orbits are looking down
+        orbits[i].lookAt(0, -100, 0);
+    }
+    return orbits
+}
+
 function displayOrbits() {
-    if (areOrbitsDisplay === 0) {
+
+    if (!areOrbitsDisplay) {
         for (i = 0; i < solarSystem.length - 1; i++) {
             scene.add(orbits[i]);
         }
-        areOrbitsDisplay = 1;
+        areOrbitsDisplay = true;
     } else {
-        areOrbitsDisplay = 0;
 
         for (i = 0; i < solarSystem.length - 1; i++) {
             scene.remove(orbits[i]);
         }
+
+        areOrbitsDisplay = false;
+
     }
 }
 
 function displayAxis() {
-    if (areAxisDisplay === 0) {
-        areAxisDisplay = 1;
+    if (!areAxisDisplay) {
+        areAxisDisplay = true;
         scene.add(axisHelper);
     } else {
-        areAxisDisplay = 0;
+        areAxisDisplay = false;
         scene.remove(axisHelper);
     }
 }
 
 function setLight() {
 
-    if (displaySunlight === 0) {
+    if (!displaySunlight) {
         scene.remove(fullLight);
         scene.add(sunlight);
         scene.add(weakLight);
-        displaySunlight = 1;
+        displaySunlight = true;
     } else {
         //Ambientlight
         scene.remove(sunlight);
         scene.remove(weakLight);
         scene.add(fullLight);
-        displaySunlight = 0;
+        displaySunlight = false;
     }
 }

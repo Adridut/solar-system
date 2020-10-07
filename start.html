@@ -21,16 +21,13 @@
 <script src="js/three.min.js"></script>
 <!-- Einbinden der OrbitControls, um die Darstellung mit der Maus rotieren zu können. -->
 
-<script  src="js/OrbitControls.js"></script>
+<script src="js/OrbitControls.js"></script>
 
 <script src="data.js"></script>
 <script src="utils.js"></script>
 <script src="ss.js"></script>
 <script src="init.js"></script>
-
-
-
-
+<script src="animation.js"></script>
 
 
 <div id="container"></div>
@@ -41,7 +38,7 @@
     <button onclick="setLight()">Lights</button>
     <button onclick="setBackground()">Background</button>
     <div class="slidecontainer">
-        <b style="color: aqua">Speed</b>
+        <p style="color: aqua">Speed</p>
         <input type="range" min="0" max="100000" value="1" class="slider" id="speedSlider">
     </div>
     <div style="color: aqua" id='seconds-counter'></div>
@@ -51,7 +48,6 @@
 
 <script>
 
-    //1st
     //TODO Clean Up
     //TODO onClick
     //TODO Improve time representation/modification
@@ -63,107 +59,40 @@
     //TODO remove earth night map from list and use earth.add(nightmap)
     //TODO update textures
     //TODO Export style
-
-    //2nd
     //TODO Matching color orbits
     //TODO Add the Moon
-
-    //3rd
     //TODO Dwarf planets and satelites
     //TODO Asteroide belt
+    //TODO make rings rotation more accruate
 
 
     document.body.appendChild(renderer.domElement);
     var el = document.getElementById('seconds-counter');
 
-    var solarSystem = new Array(9);
 
 
-    //Creating planets
-    for (i = 0; i < solarSystemData.length; i++) {
-        var planet = solarSystemData[i];
-        solarSystem[i] = createPlanet(planet);
-        scene.add(solarSystem[i]);
-    }
 
-    //Add earth clouds
-    solarSystem[6].add(createEarthClouds());
-
-    solarSystem[1].add(createRing(1024, 72, solarSystemData[1].ringTexture, solarSystemData[1].ringTrans,
-        solarSystemData[1].size - 1, solarSystemData[1].size - 3));
-
-    solarSystem[2].add(createRing(915, 64, solarSystemData[2].ringTexture, solarSystemData[2].ringTrans,
-        solarSystemData[2].size - 4, solarSystemData[2].size - 8));
-
-    var areOrbitsDisplay = 0;
-    var orbits = new Array(8);
-
-    //Creating orbits
-    for (i = 0; i < solarSystem.length - 1; i++) {
-        var s = solarSystemData[i];
-        var geometry = new THREE.TorusBufferGeometry(-(s.position) * planetDistanceFromSun, (s.size * planetSize / 10), 16, 100);
-        var material = new THREE.MeshBasicMaterial({color: 0x6897bb});
-        orbits[i] = new THREE.Mesh(geometry, material);
-        //Orbits are looking down
-        orbits[i].lookAt(0, -100, 0);
-    }
-
-    function rotationAroundSun() {
-
-        for (i = 0; i < solarSystem.length - 1; i++) {
-            solarSystem[i].position.x += ((solarSystem[i].position.z / solarSystemData[i].speed * speedAdjustment) * time);
-            solarSystem[i].position.z += -((solarSystem[i].position.x / solarSystemData[i].speed * speedAdjustment) * time);
-        }
-    }
-
-    function calculateDistanceAcceleration(state) {
-        return state.dValue * Math.pow(state.aSpeed, 2) -
-            (g * 1.98855 * Math.pow(10, 30)) / Math.pow(state.dValue, 2);
-    }
-
-    function calculateAngleAcceleration(state) {
-        return -2.0 * state.dSpeed * state.aSpeed / state.dValue;
-    }
-
-    function newValue(currentValue, time, derivative) {
-        return (currentValue + time * derivative);
-    }
-
-    function selfRotation() {
-        for (i = 0; i < solarSystem.length; i++) {
-            solarSystem[i].rotation.y += ((rotationAjustment / solarSystemData[i].rotation) * time);
-        }
-    }
-
-
-    //Timer
-    function incrementSeconds() {
-        seconds += 1;
-        modelTime += time;
-        el.innerText = "You have been here for " + seconds + " seconds, "
-            + modelTime + " days according to this model. \n 1 real second = " + time + " model day(s)";
-    }
 
     var cancel = setInterval(incrementSeconds, 1000);
 
 
     var slider = document.getElementById("speedSlider");
 
-    slider.oninput = function() {
+    slider.oninput = function () {
         time = this.value / 100;
     };
-
 
     var raycaster = new THREE.Raycaster();
     var mouse = new THREE.Vector2(), INTERSECTED;
 
-    container = document.createElement( 'div' );
-    document.body.appendChild( container );
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
     click = false;
     var pn = document.getElementById('pn');
-    document.addEventListener( 'dblclick', onDocumentClick, false );
-    document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+    document.addEventListener('dblclick', onDocumentClick, false);
+    document.addEventListener('mousemove', onDocumentMouseMove, false);
+
     // window.addEventListener( 'resize', onWindowResize, false );
 
     function onWindowResize() {
@@ -171,23 +100,23 @@
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
 
-        renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.setSize(window.innerWidth, window.innerHeight);
 
     }
 
-    function onDocumentMouseMove( event ) {
+    function onDocumentMouseMove(event) {
 
         event.preventDefault();
         // calculate mouse position in normalized device coordinates
         // (-1 to +1) for both components
         click = false;
 
-        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
     }
 
-    function onDocumentClick( event ) {
+    function onDocumentClick(event) {
 
         event.preventDefault();
         // calculate mouse position in normalized device coordinates
@@ -195,12 +124,10 @@
 
         click = true;
 
-        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
     }
-
-
 
 
     function animate() {
@@ -215,12 +142,12 @@
         render();
     }
 
-    function render(){
+    function render() {
 
-        raycaster.setFromCamera( mouse, camera );
+        raycaster.setFromCamera(mouse, camera);
 
         // calculate objects intersecting the picking ray
-        var intersects = raycaster.intersectObjects( scene.children );
+        var intersects = raycaster.intersectObjects(scene.children);
 
         i = 0;
         j = 0;
@@ -233,7 +160,7 @@
                     if (click) {
                         console.log(solarSystemData[i].name);
                         newX = solarSystem[i].position.x;
-                        while (j < solarSystem.length){
+                        while (j < solarSystem.length) {
                             //TODO make sure planets still rotate around sun and not the new (0,0,0) planet
                             solarSystem[j].position.set(solarSystem[j].position.x - newX, 0, 0);
                             sunlight.position.set(solarSystem[9].position.x, solarSystem[9].position.y, solarSystem[9].position.z);
@@ -251,7 +178,6 @@
         } else {
             pn.innerText = '';
         }
-
 
 
         renderer.render(scene, camera);
