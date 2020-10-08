@@ -179,3 +179,41 @@ function createEarthClouds() {
     var cloudMesh = new THREE.Mesh(cloudGeometry, cloudMaterial);
     return cloudMesh;
 }
+
+
+//Raycaster
+// window.addEventListener( 'resize', onWindowResize, false );
+
+function onWindowResize() {
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+}
+
+function onDocumentMouseMove(event) {
+
+    event.preventDefault();
+    // calculate mouse position in normalized device coordinates
+    // (-1 to +1) for both components
+    click = false;
+
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+}
+
+function onDocumentClick(event) {
+
+    event.preventDefault();
+    // calculate mouse position in normalized device coordinates
+    // (-1 to +1) for both components
+
+    click = true;
+
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+}

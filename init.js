@@ -48,10 +48,8 @@ let displaySunlight = true;
 const sunlight = new THREE.PointLight(0xffffff, 1, 10000 * planetDistanceFromSun);
 sunlight.position.set(0, 0, 0);
 scene.add(sunlight);
-
 const weakLight = new THREE.AmbientLight(0xffffff, 0.1);
 scene.add(weakLight);
-
 const fullLight = new THREE.AmbientLight(0xffffff, 1);
 
 //Orbits
@@ -60,5 +58,12 @@ let orbits = createOrbits();
 
 //Planets
 generatePlanets();
+
+//Raycaster
+var raycaster = new THREE.Raycaster();
+var mouse = new THREE.Vector2(), INTERSECTED;
+click = false;
+
+
 
 

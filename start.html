@@ -43,7 +43,7 @@
     </div>
     <div style="color: aqua" id='seconds-counter'></div>
     <div style="color: aqua" id='track'></div>
-    <div style="color: yellow" id='pn'></div>
+    <div style="color: yellow" id='planetName'></div>
 </div>
 
 <script>
@@ -66,15 +66,11 @@
     //TODO make rings rotation more accruate
 
 
+    //Counter
     document.body.appendChild(renderer.domElement);
     var el = document.getElementById('seconds-counter');
 
-
-
-
-
-    var cancel = setInterval(incrementSeconds, 1000);
-
+    const cancel = setInterval(incrementSeconds, 1000);
 
     var slider = document.getElementById("speedSlider");
 
@@ -82,53 +78,15 @@
         time = this.value / 100;
     };
 
-    var raycaster = new THREE.Raycaster();
-    var mouse = new THREE.Vector2(), INTERSECTED;
 
+    //Raycaster
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    click = false;
-    var pn = document.getElementById('pn');
+    var planetName = document.getElementById('planetName');
     document.addEventListener('dblclick', onDocumentClick, false);
     document.addEventListener('mousemove', onDocumentMouseMove, false);
-
-    // window.addEventListener( 'resize', onWindowResize, false );
-
-    function onWindowResize() {
-
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-
-        renderer.setSize(window.innerWidth, window.innerHeight);
-
-    }
-
-    function onDocumentMouseMove(event) {
-
-        event.preventDefault();
-        // calculate mouse position in normalized device coordinates
-        // (-1 to +1) for both components
-        click = false;
-
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    }
-
-    function onDocumentClick(event) {
-
-        event.preventDefault();
-        // calculate mouse position in normalized device coordinates
-        // (-1 to +1) for both components
-
-        click = true;
-
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    }
-
+    
 
     function animate() {
 
@@ -140,48 +98,6 @@
         controls.update();
 
         render();
-    }
-
-    function render() {
-
-        raycaster.setFromCamera(mouse, camera);
-
-        // calculate objects intersecting the picking ray
-        var intersects = raycaster.intersectObjects(scene.children);
-
-        i = 0;
-        j = 0;
-
-        if (intersects[0]) {
-            while (i < solarSystem.length) {
-                if (intersects[0].object === solarSystem[i]) {
-                    pn.innerText = solarSystemData[i].name;
-
-                    if (click) {
-                        console.log(solarSystemData[i].name);
-                        newX = solarSystem[i].position.x;
-                        while (j < solarSystem.length) {
-                            //TODO make sure planets still rotate around sun and not the new (0,0,0) planet
-                            solarSystem[j].position.set(solarSystem[j].position.x - newX, 0, 0);
-                            sunlight.position.set(solarSystem[9].position.x, solarSystem[9].position.y, solarSystem[9].position.z);
-                            camera.position.set(0, 0, solarSystemData[i].size);
-                            j = j + 1;
-                        }
-                        // camera.position.set(solarSystem[i].position.x, solarSystem[i].position.y, solarSystem[i].position.z + 400);
-                        // camera.lookAt(solarSystem[i].position.x, solarSystem[i].position.y, solarSystem[i].position.z);
-                        // controls.update();
-                        click = false
-                    }
-                }
-                i = i + 1;
-            }
-        } else {
-            pn.innerText = '';
-        }
-
-
-        renderer.render(scene, camera);
-
     }
 
 
