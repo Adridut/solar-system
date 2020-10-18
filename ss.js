@@ -23,7 +23,7 @@ function createPlanet(p) {
     let planet = new THREE.Mesh(geometry, material);
     planet.receiveShadow = true;
     planet.castShadow = true;
-    planet.position.set(p.position * planetDistanceFromSun, 0, 0);
+    planet.position.set(-p.position * planetDistanceFromSun, 0, -p.position * planetDistanceFromSun);
 
     return planet
 }

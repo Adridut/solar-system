@@ -4,7 +4,18 @@ const planetSize = 1 / 2;
 const sunSize = 0.5;
 const earthSize = 1;
 
+
 const solarSystemData = [
+    {
+        name: "TEST",
+        texture: './textures/neptunemap.jpg',
+        size: 27.7,
+        position: -700,
+        speed: 0,
+        rotation: 0.671,
+        mass: 1.02413*10^26,
+        id: 9
+    },
     {
         name: "Neptune",
         texture: './textures/neptunemap.jpg',

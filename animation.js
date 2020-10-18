@@ -1,14 +1,30 @@
 function rotationAroundSun() {
 
-    for (i = 0; i < solarSystem.length - 1; i++) {
+    for (let i = 1; i < solarSystem.length - 1; i++) {
         solarSystem[i].position.x += ((solarSystem[i].position.z / solarSystemData[i].speed * speedAdjustment) * time);
         solarSystem[i].position.z += -((solarSystem[i].position.x / solarSystemData[i].speed * speedAdjustment) * time);
     }
+
+    if (solarSystem[0].position.x < 0){
+        speed += Math.abs(0.1/((solarSystem[0].position.x))) * time
+        solarSystem[0].position.x += speed
+    } else if (solarSystem[0].position.x > 0){
+        speed -= Math.abs(0.1/((solarSystem[0].position.x))) * time
+        solarSystem[0].position.x += speed
+    }
+    if (solarSystem[0].position.z < 0){
+        speedZ += Math.abs(0.1/((solarSystem[0].position.z))) * time
+        solarSystem[0].position.z += speedZ
+    } else if (solarSystem[0].position.z > 0){
+        speedZ -= Math.abs(0.1/((solarSystem[0].position.z))) * time
+        solarSystem[0].position.z += speedZ 
+    }
+
 }
 
 
 function selfRotation() {
-    for (i = 0; i < solarSystem.length; i++) {
+    for (let i = 0; i < solarSystem.length; i++) {
         solarSystem[i].rotation.y += ((rotationAjustment / solarSystemData[i].rotation) * time);
     }
 }
@@ -26,7 +42,7 @@ function render() {
     raycaster.setFromCamera(mouse, camera);
 
     // calculate objects intersecting the picking ray
-    var intersects = raycaster.intersectObjects(scene.children);
+    let intersects = raycaster.intersectObjects(scene.children);
 
     i = 0;
     j = 0;

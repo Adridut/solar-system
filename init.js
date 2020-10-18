@@ -18,10 +18,9 @@ controls.update();
 let planetDistanceFromSun = 1 / 2;
 let time = 0.01;
 
+//Gravity
 const g = 6.6743e-11;
-let s = 26 * time;
-let sX = 26 * time;
-let sZ = 26 * time;
+
 
 // 1 second = 1 day
 let speedAdjustment = 0.105;
@@ -60,9 +59,12 @@ let orbits = createOrbits();
 generatePlanets();
 
 //Raycaster
-var raycaster = new THREE.Raycaster();
-var mouse = new THREE.Vector2(), INTERSECTED;
+let raycaster = new THREE.Raycaster();
+let mouse = new THREE.Vector2(), INTERSECTED;
 click = false;
+
+let speed = 0
+let speedZ = 0
 
 
 

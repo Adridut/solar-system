@@ -44,11 +44,11 @@
     <div style="color: aqua" id='seconds-counter'></div>
     <div style="color: aqua" id='track'></div>
     <div style="color: yellow" id='planetName'></div>
+    <div style="color: purple" id='speed'></div>
 </div>
 
 <script>
 
-    //TODO Clean Up
     //TODO onClick
     //TODO Improve time representation/modification
     //TODO Buttons to change planets sizes and distances
@@ -68,11 +68,14 @@
 
     //Counter
     document.body.appendChild(renderer.domElement);
-    var el = document.getElementById('seconds-counter');
+
+    const speedContainer = document.getElementById("speed")
+
+    const el = document.getElementById('seconds-counter');
 
     const cancel = setInterval(incrementSeconds, 1000);
 
-    var slider = document.getElementById("speedSlider");
+    const slider = document.getElementById("speedSlider");
 
     slider.oninput = function () {
         time = this.value / 100;
@@ -83,10 +86,10 @@
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    var planetName = document.getElementById('planetName');
+    const planetName = document.getElementById('planetName');
     document.addEventListener('dblclick', onDocumentClick, false);
     document.addEventListener('mousemove', onDocumentMouseMove, false);
-    
+
 
     function animate() {
 
@@ -94,6 +97,9 @@
 
         rotationAroundSun();
         selfRotation();
+        speedContainer.innerText = "Speed x: " + speed.toFixed(2) + " Speed z: " + speedZ.toFixed(2) +
+            " position x : z " + Math.round(solarSystem[0].position.x) + " : " + Math.round(solarSystem[0].position.z)
+
 
         controls.update();
 
