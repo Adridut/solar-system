@@ -6,17 +6,17 @@ function rotationAroundSun() {
     }
 
     if (solarSystem[0].position.x < 0){
-        speed += Math.abs(0.1/((solarSystem[0].position.x))) * time
+        speed += 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[0].position.x, 2) + 1)))
         solarSystem[0].position.x += speed
-    } else if (solarSystem[0].position.x > 0){
-        speed -= Math.abs(0.1/((solarSystem[0].position.x))) * time
+    } else if (solarSystem[0].position.x >= 0){
+        speed -= 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[0].position.x, 2) + 1)))
         solarSystem[0].position.x += speed
     }
     if (solarSystem[0].position.z < 0){
-        speedZ += Math.abs(0.1/((solarSystem[0].position.z))) * time
+        speedZ += 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[0].position.z, 2) + 1)))
         solarSystem[0].position.z += speedZ
-    } else if (solarSystem[0].position.z > 0){
-        speedZ -= Math.abs(0.1/((solarSystem[0].position.z))) * time
+    } else if (solarSystem[0].position.z >= 0){
+        speedZ -= 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[0].position.z, 2) + 1)))
         solarSystem[0].position.z += speedZ 
     }
 

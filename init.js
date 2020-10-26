@@ -63,8 +63,8 @@ let raycaster = new THREE.Raycaster();
 let mouse = new THREE.Vector2(), INTERSECTED;
 click = false;
 
-let speed = 0
-let speedZ = 0
+let speed = 1
+let speedZ = -1
 
 
 
