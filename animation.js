@@ -1,24 +1,42 @@
 function rotationAroundSun() {
 
-    for (let i = 1; i < solarSystem.length - 1; i++) {
-        solarSystem[i].position.x += ((solarSystem[i].position.z / solarSystemData[i].speed * speedAdjustment) * time);
-        solarSystem[i].position.z += -((solarSystem[i].position.x / solarSystemData[i].speed * speedAdjustment) * time);
+    // for (let i = 1; i < solarSystem.length - 1; i++) {
+    //     solarSystem[i].position.x += ((solarSystem[i].position.z / solarSystemData[i].speed * speedAdjustment) * time);
+    //     solarSystem[i].position.z += -((solarSystem[i].position.x / solarSystemData[i].speed * speedAdjustment) * time);
+    // }
+
+    for (let i = 0; i < solarSystem.length - 1; i++) {
+        
+        if (solarSystem[i].position.x < 0) {
+            solarSystemData[i].speedX += 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[i].position.x, 2) + 1)))
+            solarSystem[i].position.x += solarSystemData[i].speedX
+        }  else if (solarSystem[i].position.x >= 0){
+        solarSystemData[i].speedX -= 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[i].position.x, 2) + 1)))
+        solarSystem[i].position.x += solarSystemData[i].speedX
+        }
+        if (solarSystem[i].position.z < 0){
+            solarSystemData[i].speedZ += 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[i].position.z, 2) + 1)))
+            solarSystem[i].position.z += solarSystemData[i].speedZ
+        } else if (solarSystem[i].position.z >= 0){
+            solarSystemData[i].speedZ -= 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[i].position.z, 2) + 1)))
+            solarSystem[i].position.z += solarSystemData[i].speedZ
+        }
     }
 
-    if (solarSystem[0].position.x < 0){
-        speed += 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[0].position.x, 2) + 1)))
-        solarSystem[0].position.x += speed
-    } else if (solarSystem[0].position.x >= 0){
-        speed -= 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[0].position.x, 2) + 1)))
-        solarSystem[0].position.x += speed
-    }
-    if (solarSystem[0].position.z < 0){
-        speedZ += 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[0].position.z, 2) + 1)))
-        solarSystem[0].position.z += speedZ
-    } else if (solarSystem[0].position.z >= 0){
-        speedZ -= 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[0].position.z, 2) + 1)))
-        solarSystem[0].position.z += speedZ 
-    }
+    // if (solarSystem[0].position.x < 0){
+    //     solarSystemData[0].speedX += 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[0].position.x, 2) + 1)))
+    //     solarSystem[0].position.x +=
+    // } else if (solarSystem[0].position.x >= 0){
+    //     solarSystemData[0].speedX -= 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[0].position.x, 2) + 1)))
+    //     solarSystem[0].position.x += solarSystemData[0].speedX
+    // }
+    // if (solarSystem[0].position.z < 0){
+    //     solarSystemData[0].speedZ += 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[0].position.z, 2) + 1)))
+    //     solarSystem[0].position.z += solarSystemData[0].speedZ
+    // } else if (solarSystem[0].position.z >= 0){
+    //     solarSystemData[0].speedZ -= 0.01 + (g * Math.abs(100000000/(Math.pow(solarSystem[0].position.z, 2) + 1)))
+    //     solarSystem[0].position.z += solarSystemData[0].speedZ
+    // }
 
 }
 
@@ -50,7 +68,7 @@ function render() {
     if (intersects[0]) {
         while (i < solarSystem.length) {
             if (intersects[0].object === solarSystem[i]) {
-                planetName.innerText = solarSystemData[i].name;
+                planetName.innerText = solarSystemData[i].name + " " + solarSystemData[i].id;
 
                 if (click) {
                     console.log(solarSystemData[i].name);

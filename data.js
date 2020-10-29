@@ -5,7 +5,7 @@ const sunSize = 0.5;
 const earthSize = 1;
 
 
-const solarSystemData = [
+let solarSystemData = [
     {
         name: "TEST",
         texture: './textures/neptunemap.jpg',
@@ -14,7 +14,9 @@ const solarSystemData = [
         speed: 0,
         rotation: 0.671,
         mass: 1.02413*10^26,
-        id: 9
+        id: 9,
+        speedX: 1.0,
+        speedZ: -1.0
     },
     {
         name: "Neptune",
@@ -24,7 +26,9 @@ const solarSystemData = [
         speed: 60190.03,
         rotation: 0.671,
         mass: 1.02413*10^26,
-        id: 8
+        id: 8,
+        speedX: 1.0,
+        speedZ: -1.0
     },
     {
         name: "Uranus",
@@ -36,7 +40,9 @@ const solarSystemData = [
         mass: 8.6810*10^25,
         id: 7,
         ringTexture: './textures/uranusringcolour.jpg',
-        ringTrans:'./textures/uranusringtrans.gif'
+        ringTrans:'./textures/uranusringtrans.gif',
+        speedX: 1.0,
+        speedZ: -1.0
     },
     {
         name: "Saturn",
@@ -48,7 +54,9 @@ const solarSystemData = [
         mass: 5.6834*10^26,
         id: 6,
         ringTexture: './textures/saturnringcolor.jpg',
-        ringTrans: './textures/saturnringpattern.gif'
+        ringTrans: './textures/saturnringpattern.gif',
+        speedX: 1.0,
+        speedZ: -1.0
     },
     {
         name: "Jupiter",
@@ -63,7 +71,9 @@ const solarSystemData = [
         dValue: 1.496 * Math.pow(10, 11),
         dSpeed: 0,
         aValue: Math.PI / 6,
-        aSpeed: 1.990986 *  Math.pow(10, -7)
+        aSpeed: 1.990986 *  Math.pow(10, -7),
+        speedX: 1.0,
+        speedZ: -1.0
     },
     {
         name: "Mars",
@@ -74,7 +84,9 @@ const solarSystemData = [
         speed: 686.98,
         rotation: 1.02,
         mass: 6.4171 * 10^23,
-        id: 4
+        id: 4,
+        speedX: 1.0,
+        speedZ: -1.0
     },
     {
         name: "EarthNightMap",
@@ -84,7 +96,9 @@ const solarSystemData = [
         position: -303.2,
         speed: 365.26,
         mass: 5.97237 * 10^24,
-        rotation: 1
+        rotation: 1,
+        speedX: 1.0,
+        speedZ: -1.0
     },
     {
         name: "Earth",
@@ -95,7 +109,9 @@ const solarSystemData = [
         speed: 365.26,
         rotation: 1,
         mass: 5.97237 * 10^24,
-        id: 3
+        id: 3,
+        speedX: 1.0,
+        speedZ: -1.0
     },
     {
         name: "Venus",
@@ -106,7 +122,9 @@ const solarSystemData = [
         speed: 224.7,
         rotation: -243.02,
         mass: 4.8675 * 10^24,
-        id: 2
+        id: 2,
+        speedX: 1.0,
+        speedZ: -1.0
     },
     {
         name: "Mercury",
@@ -117,7 +135,9 @@ const solarSystemData = [
         speed: 87.97,
         rotation: 58.55,
         mass: 3.3011 * 10^23,
-        id: 1
+        id: 1,
+        speedX: 1.0,
+        speedZ: -1.0
     },
     {
         name: "Sun",
@@ -126,6 +146,8 @@ const solarSystemData = [
         position: 0,
         rotation: 26,
         mass: 1.9885*10^30,
-        id: 0
+        id: 0,
+        speedX: 1.0,
+        speedZ: -1.0
     }
 ];
